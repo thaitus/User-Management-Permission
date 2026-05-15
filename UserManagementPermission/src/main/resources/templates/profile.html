@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Hồ sơ cá nhân - IVS System</title>
+</head>
+<body>
+
+    <span layout:fragment="page-header">Hồ sơ cá nhân</span>
+
+    <div layout:fragment="content">
+        
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 bg-white border-start border-5 border-success" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2"></i><span class="text-dark fw-semibold">Cập nhật hồ sơ thành công!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${pwdSuccess}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 bg-white border-start border-5 border-success" role="alert">
+            <i class="bi bi-shield-check-fill text-success me-2"></i><span class="text-dark fw-semibold" th:text="${pwdSuccess}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0 rounded-4 text-center">
+                    <div class="card-body p-4 bg-white rounded-4">
+                        <img th:src="@{${session.loggedInUser.avatar}}" alt="Avatar" class="rounded-circle shadow-sm mb-3 border border-3 border-light" style="width: 160px; height: 160px; object-fit: cover;">
+                        <h4 class="fw-bold mb-1 text-dark" th:text="${session.loggedInUser.fullName}">Tên Người Dùng</h4>
+                        <p class="text-muted mb-4" th:text="${session.loggedInUser.position}">Chức vụ</p>
+                        
+                        <form th:action="@{/profile/avatar}" method="post" enctype="multipart/form-data" id="avatarForm">
+                            <input type="file" id="avatarInput" name="avatarFile" accept="image/png, image/jpeg" style="display: none;">
+                            <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4 fw-semibold shadow-sm" onclick="document.getElementById('avatarInput').click();">
+                                <i class="bi bi-camera-fill me-1"></i> Đổi ảnh đại diện
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0" style="color: #ff8c00;">
+                            <i class="bi bi-person-vcard-fill me-2"></i>Chi tiết thông tin
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-dark btn-sm px-3 rounded-pill fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#changePassModal">
+                                <i class="bi bi-key-fill me-1"></i> Đổi mật khẩu
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm px-3 rounded-pill fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-sm-4 text-muted fw-semibold">Tên tài khoản:</div>
+                            <div class="col-sm-8 fw-bold text-dark fs-5" th:text="${session.loggedInUser.userName}">admin</div>
+                        </div>
+                        <hr class="text-muted opacity-25">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted fw-semibold">Họ và tên:</div>
+                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.fullName}">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted fw-semibold">Giới tính:</div>
+                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.gender}">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted fw-semibold">Phòng ban:</div>
+                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.department}">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted fw-semibold">Số điện thoại:</div>
+                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.phone == '' ? 'Chưa cập nhật' : session.loggedInUser.phone}">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted fw-semibold">Email:</div>
+                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.email == '' ? 'Chưa cập nhật' : session.loggedInUser.email}">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">Cập nhật thông tin</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/profile/update}" method="post">
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small">Họ và tên</label>
+                                <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" th:value="${session.loggedInUser.fullName}" required>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-dark fw-bold small">Giới tính</label>
+                                    <select class="form-select bg-light border-0 shadow-none" name="gender">
+                                        <option value="Nam" th:selected="${session.loggedInUser.gender == 'Nam'}">Nam</option>
+                                        <option value="Nữ" th:selected="${session.loggedInUser.gender == 'Nữ'}">Nữ</option>
+                                        <option value="Khác" th:selected="${session.loggedInUser.gender == 'Khác'}">Khác</option>
+                                        <option value="Chưa xác định" th:selected="${session.loggedInUser.gender == 'Chưa xác định'}">Chưa xác định</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-dark fw-bold small">Chức vụ</label>
+                                    <input type="text" class="form-control bg-light border-0 shadow-none" name="position" th:value="${session.loggedInUser.position}">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small">Số điện thoại</label>
+                                <input type="text" class="form-control bg-light border-0 shadow-none" name="phone" th:value="${session.loggedInUser.phone}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small">Email</label>
+                                <input type="email" class="form-control bg-light border-0 shadow-none" name="email" th:value="${session.loggedInUser.email}">
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pb-4 justify-content-center">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="changePassModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
+                            <i class="bi bi-shield-lock-fill me-2"></i>Bảo mật tài khoản
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/profile/change-password}" method="post" autocomplete="off">
+                        <div class="modal-body p-4">
+                            <div class="mb-4">
+                                <label class="form-label text-dark fw-bold small">Mật khẩu hiện tại</label>
+                                <div class="input-group bg-light rounded-3 overflow-hidden border-0">
+                                    <input type="password" class="form-control bg-transparent border-0 shadow-none" name="oldPass" th:value="${oldPassVal}" placeholder="Nhập mật khẩu cũ">
+                                    <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
+                                </div>
+                                <div th:if="${errorOldPass}" class="text-danger small mt-1 fw-semibold" th:text="${errorOldPass}"></div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-dark fw-bold small">Mật khẩu mới</label>
+                                <div class="input-group bg-light rounded-3 overflow-hidden border-0">
+                                    <input type="password" class="form-control bg-transparent border-0 shadow-none" name="newPass" th:value="${newPassVal}" placeholder="Nhập mật khẩu mới">
+                                    <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
+                                </div>
+                                <div th:if="${errorNewPass}" class="text-danger small mt-1 fw-semibold" th:text="${errorNewPass}"></div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-dark fw-bold small">Xác nhận mật khẩu</label>
+                                <div class="input-group bg-light rounded-3 overflow-hidden border-0">
+                                    <input type="password" class="form-control bg-transparent border-0 shadow-none" name="confirmPass" th:value="${confirmPassVal}" placeholder="Nhập lại mật khẩu mới">
+                                    <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
+                                </div>
+                                <div th:if="${errorConfirmPass}" class="text-danger small mt-1 fw-semibold" th:text="${errorConfirmPass}"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pb-4 justify-content-center">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block layout:fragment="js-scripts">
+        <script th:inline="javascript">
+            if (new URLSearchParams(window.location.search).has('openModal')) {
+                const pwdModal = new bootstrap.Modal(document.getElementById('changePassModal'));
+                pwdModal.show();
+            }
+        </script>
+    </th:block>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+/* Layout Admin Tổng quát */
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; }
+.sidebar { min-height: 100vh; width: 260px; background-color: #343a40; color: white; transition: all 0.3s; }
+.sidebar-brand { padding: 20px; background-color: #ff8c00; color: white; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); }
+.sidebar-nav { padding: 0; list-style: none; }
+.sidebar-nav li { border-bottom: 1px solid #4b545c; }
+.sidebar-nav a { display: block; padding: 15px 20px; color: #c2c7d0; text-decoration: none; }
+.sidebar-nav a:hover, .sidebar-nav a.active { background-color: #495057; color: white; border-left: 4px solid #ff8c00; }
+.top-navbar { background-color: #e9ecef; padding: 15px 20px; border-bottom: 1px solid #dee2e6; }
+
+/* Profile & Modals */
+.profile-avatar { width: 150px; height: 150px; object-fit: cover; }
+.input-group.shadow-sm { border-radius: 8px; overflow: hidden; }
+.modal-content { border-radius: 15px !important; }
+.toggle-pwd i.text-primary { color: #ff8c00 !important; }

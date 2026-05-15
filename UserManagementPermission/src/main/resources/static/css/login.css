@@ -1,0 +1,123 @@
+/* login.css */
+
+/* 1. HIỆU ỨNG BACKGROUND DI CHUYỂN VÔ TẬN */
+body {
+    /* Nhớ tải ảnh tên bg.jpg, chất lượng cao, seamless texture bỏ vào static/images/ */
+    background-image: url('/images/bg.jpg'); 
+    
+    /* 1a. Cho phép ảnh lặp lại theo chiều ngang */
+    background-repeat: repeat-x;
+    
+    /* 1b. Neo ảnh cố định, không cuộn theo trang (giữ layout đầm chắc) */
+    background-attachment: fixed;
+    
+    /* 1c. Đặt chiều cao ảnh bằng chiều cao màn hình, chiều rộng tự động */
+    background-size: auto 100vh;
+    
+    /* 1d. Tăng tốc độ render cho animation */
+    will-change: background-position;
+
+    /* 1e. GỌI ANIMATION:
+       tên: slideBackground,
+       thời gian: 120 giây (chạy càng lâu càng chậm, càng mịn),
+       kiểu speed: linear (đều),
+       lặp: infinite (vô tận)
+    */
+    animation: slideBackground 70s linear infinite;
+
+    /* Các thuộc tính cũ giữ nguyên */
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5; 
+}
+
+/* 1f. ĐỊNH NGHĨA ANIMATION CHẠY TỪ PHẢI SANG TRÁI */
+@keyframes slideBackground {
+    from {
+        /* Bắt đầu ở vị trí gốc */
+        background-position-x: 0;
+    }
+    to {
+        /* Chạy hết 100% bề ngang của tấm ảnh. 
+           Dùng số âm để nó chạy từ phải sang trái. 
+           Nếu muốn chạy từ trái sang phải, ông xóa dấu trừ đi. */
+        background-position-x: -100vw; 
+    }
+}
+
+.card-login {
+    background: rgba(255, 255, 255, 0.95); 
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
+    transition: none; /* Tắt transformation chóng mặt khi hover */
+}
+
+.card-login:hover {
+    transform: none; /* Tắt transformation */
+}
+
+/* Hiệu ứng viền input tĩnh */
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 10px 15px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus {
+    border-color: #ff8c00; 
+    box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.10); /* Chỉ sáng nhẹ viền */
+}
+
+.btn-eye {
+    border-color: #ced4da;
+    background-color: #fff;
+    color: #6c757d;
+}
+
+.btn-eye:hover, .btn-eye:focus {
+    background-color: #f8f9fa;
+    color: #ff8c00;
+    border-color: #ced4da;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Nút Submit */
+.btn-brand {
+    background-color: #ff8c00;
+    border-color: #ff8c00;
+    color: white;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-brand:hover {
+    background-color: #e67e00;
+    border-color: #e67e00;
+    color: white;
+}
+
+.logo-container img {
+    width: 220px; 
+    
+    /* Xóa nền xám */
+    mix-blend-mode: multiply; 
+    filter: brightness(1.1) contrast(1.2);
+    
+    /* scale(1.2) nghĩa là phóng to 20%
+       scale(1.5) nghĩa là phóng to 50% 
+       Chỉnh số này (1.3, 1.4, 1.6...) cho đến khi thấy ưng mắt thì thôi */
+    transform: scale(1.6); 
+}
+
+/* Thêm một chút padding vào container để logo khi phóng to không bị đè lên dòng chữ "ĐĂNG NHẬP" ở dưới */
+.logo-container {
+    padding-top: 10px;
+    padding-bottom: 15px; 
+}

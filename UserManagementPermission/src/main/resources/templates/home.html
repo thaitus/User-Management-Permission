@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Trang chủ - IVS System</title>
+</head>
+<body>
+
+    <span layout:fragment="page-header">Tổng quan hệ thống</span>
+
+    <div layout:fragment="content">
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body text-center p-5">
+                        <div class="mb-4">
+                            <h2 class="fw-bold mb-3">Chào mừng trở lại, <span th:text="${session.loggedInUser.fullName}" style="color: #ff8c00;">User</span>!</h2>
+                            <p class="text-muted fs-5">
+                                Bạn đang đăng nhập với vai trò: 
+                                <span class="badge bg-info text-dark px-3 py-2 rounded-pill shadow-sm" th:text="${session.loggedInUser.position}">Role</span>
+                            </p>
+                        </div>
+                        
+                        <hr class="w-50 mx-auto text-muted my-4">
+                        <p class="text-secondary mb-4">Hãy chọn các chức năng bên dưới hoặc menu trái để bắt đầu làm việc.</p>
+                        
+                        <div class="d-flex justify-content-center gap-3">
+                            <a th:href="@{/profile}" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm">
+                                <i class="bi bi-person-badge me-2"></i>Hồ sơ cá nhân
+                            </a>
+                            
+                            <a th:if="${session.loggedInUser.userName == 'admin' or session.loggedInUser.position == 'Manager'}" 
+                               th:href="@{/users}" class="btn btn-outline-dark px-4 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-people-fill me-2"></i>Quản lý Người dùng
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
