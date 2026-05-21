@@ -7,89 +7,161 @@
 </head>
 <body>
 
-    <span layout:fragment="page-header">Quản lý người dùng</span>
+    <span layout:fragment="page-header" class="d-none"></span>
 
     <div layout:fragment="content">
-        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 bg-white border-start border-5 border-success" role="alert">
+        
+        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;" data-i18n="title_user">
+            Quản lý người dùng
+        </h2>
+
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 border-start border-5 border-success rounded-3 mb-4" role="alert">
             <i class="bi bi-check-circle-fill text-success me-2"></i><span class="text-dark fw-semibold" th:text="${successMsg}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
-            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-3">
-                <h5 class="mb-0 fw-bold" style="color: #ff8c00;">
-                    <i class="bi bi-people-fill me-2"></i>Danh sách tài khoản
-                </h5>
-                
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="input-group input-group-sm rounded-pill overflow-hidden border">
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom">
+                <form th:action="@{/users}" method="get" class="m-0">
+                    <input type="hidden" name="sortBy" th:value="${sortBy}">
+                    <input type="hidden" name="sortDir" th:value="${sortDir}">
+                    <div class="input-group input-group-sm rounded-pill overflow-hidden border px-2 py-1" style="border-color: #ff8c00 !important; width: 320px;">
                         <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control border-0 shadow-none" placeholder="Tìm tên, tài khoản...">
+                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên, tài khoản... (Nhấn Enter)" data-i18n="search_ph">
                     </div>
-                    <button class="btn btn-primary btn-sm rounded-pill px-4 fw-bold shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-person-plus-fill me-1"></i> Thêm mới
-                    </button>
-                </div>
+                </form>
+                
+                <button th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}"
+                        class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" 
+                        style="background-color: #ff8c00; border: none;" 
+                        data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi bi-person-plus-fill"></i> <span data-i18n="btn_add">Thêm mới</span>
+                </button>
             </div>
             
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light text-dark fw-bold">
-                            <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Tài khoản</th>
-                                <th>Họ và Tên</th>
-                                <th>Nhóm / Vai trò</th>
-                                <th>Trạng thái</th>
-                                <th class="text-end pe-4">Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="user : ${userList}">
-                                <td class="ps-4 fw-bold text-muted" th:text="${user.userID}"></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img th:src="@{${user.avatar != null ? user.avatar : '/images/default-avatar.png'}}" class="rounded-circle me-3 border" width="40" height="40" style="object-fit: cover;">
-                                        <div>
-                                            <div class="fw-bold text-dark" th:text="${user.userName}"></div>
-                                            <div class="text-muted small" th:text="${user.email}"></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="fw-medium text-dark" th:text="${user.fullName}"></td>
-                                <td>
-                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill" th:text="${user.position != null ? user.position : 'Chưa phân nhóm'}"></span>
-                                </td>
-                                <td>
-                                    <span th:if="${user.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">Đang hoạt động</span>
-                                    <span th:unless="${user.isActive}" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">Đã khóa</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle me-1 shadow-sm" title="Chỉnh sửa"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-sm btn-outline-secondary rounded-circle shadow-sm" title="Khóa/Xóa"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 text-muted fw-bold" style="width: 8%;" data-i18n="th_stt">STT</th>
                             
-                            <tr th:if="${#lists.isEmpty(userList)}">
-                                <td colspan="6" class="text-center py-5 text-muted">
-                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                    Chưa có dữ liệu người dùng
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            <th style="width: 25%;">
+                                <a th:href="@{/users(page=${currentPage}, sortBy='userName', sortDir=${sortBy == 'userName' and sortDir == 'asc' ? 'desc' : (sortBy == 'userName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_account">Tài khoản</span>
+                                    <i th:if="${sortBy != 'userName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'userName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'userName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th style="width: 20%;">
+                                <a th:href="@{/users(page=${currentPage}, sortBy='fullName', sortDir=${sortBy == 'fullName' and sortDir == 'asc' ? 'desc' : (sortBy == 'fullName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_fullname">Họ và Tên</span>
+                                    <i th:if="${sortBy != 'fullName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'fullName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'fullName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th style="width: 15%;">
+                                <a th:href="@{/users(page=${currentPage}, sortBy='position', sortDir=${sortBy == 'position' and sortDir == 'asc' ? 'desc' : (sortBy == 'position' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_role">Vai trò</span>
+                                    <i th:if="${sortBy != 'position' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'position' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'position' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th style="width: 17%;">
+                                <a th:href="@{/users(page=${currentPage}, sortBy='isActive', sortDir=${sortBy == 'isActive' and sortDir == 'asc' ? 'desc' : (sortBy == 'isActive' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_status">Trạng thái</span>
+                                    <i th:if="${sortBy != 'isActive' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'isActive' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'isActive' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}"
+                                class="text-end pe-4 text-muted fw-bold" style="width: 15%;" data-i18n="th_action">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user, iterStat : ${userList}">
+                            <td class="ps-4 text-muted fw-bold" th:text="${(currentPage * 10) + iterStat.count}"></td>
+                            
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="position-relative d-inline-block">
+                                        <img th:src="@{${user.avatar != null ? user.avatar : '/images/default-avatar.png'}}" class="rounded-circle border" width="40" height="40" style="object-fit: cover; border-color: #ff8c00 !important;">
+                                        <span th:if="${user.isActive}" class="position-absolute p-1 bg-success border border-2 border-white rounded-circle" style="bottom: 2px; right: -2px; width: 12px; height: 12px;"></span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark" th:text="${user.userName}"></div>
+                                        <div class="text-muted small" th:text="${user.email != null ? user.email : 'Chưa cập nhật email'}"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="fw-medium text-dark" th:text="${user.fullName}"></td>
+                            
+                            <td>
+                                <span th:if="${user.position == 'Admin' or user.position == 'Tổng Giám Đốc'}" class="badge bg-danger rounded-pill px-3 py-2 shadow-sm" th:text="${user.position}"></span>
+                                <span th:if="${user.position == 'Manager'}" class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">Manager</span>
+                                <span th:if="${user.position == 'HR'}" class="badge bg-success rounded-pill px-3 py-2 shadow-sm">HR</span>
+                                <span th:if="${user.position != 'Admin' and user.position != 'Tổng Giám Đốc' and user.position != 'Manager' and user.position != 'HR'}" class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm" th:text="${user.position != null ? user.position : 'Chưa có'}"></span>
+                            </td>
+                            
+                            <td>
+                                <span th:if="${user.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2">
+                                    <i class="bi bi-circle-fill text-success" style="font-size: 0.4rem;"></i> Online
+                                </span>
+                                <span th:unless="${user.isActive}" class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2">
+                                    <i class="bi bi-circle-fill text-danger" style="font-size: 0.4rem;"></i> Offline
+                                </span>
+                            </td>
+                            
+                            <td th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}" 
+                                class="text-end pe-4">
+                                <button class="btn btn-sm btn-outline-primary rounded-circle me-1 shadow-sm" 
+                                        title="Chỉnh sửa" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editUserModal"
+                                        th:attr="data-id=${user.userID}, data-fullname=${user.fullName}, data-position=${user.position}, data-isenabled=${user.isEnabled}"
+                                        onclick="fillEditModal(this)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                
+                                <form th:action="@{/users/delete}" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này không? Hành động này không thể hoàn tác!');">
+                                    <input type="hidden" name="userId" th:value="${user.userID}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" title="Xóa"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(userList)}">
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-search fs-3 d-block mb-2 opacity-50"></i>
+                                Không tìm thấy dữ liệu.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             
-            <div class="card-footer bg-white py-3 border-top d-flex justify-content-between align-items-center">
-                <span class="text-muted small">Đang hiển thị trang 1</span>
-                <ul class="pagination pagination-sm mb-0">
-                    <li class="page-item disabled"><a class="page-link text-secondary" href="#">Trước</a></li>
-                    <li class="page-item active"><a class="page-link bg-primary border-primary" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link text-dark" href="#">Sau</a></li>
-                </ul>
+            <div class="d-flex justify-content-between align-items-center mt-4 px-2">
+                <span class="text-muted small">Đang hiển thị <span th:text="${#lists.size(userList)}"></span> / <span th:text="${totalElements}"></span> người dùng</span>
+                <nav th:if="${totalPages > 1}">
+                    <ul class="pagination pagination-sm mb-0 shadow-sm gap-1">
+                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                            <a class="page-link text-dark border-0 bg-light rounded" th:href="@{/users(page=${currentPage - 1}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                            <a class="page-link border-0 rounded fw-bold" th:classappend="${currentPage == i ? 'text-white' : 'text-dark bg-light'}" th:style="${currentPage == i ? 'background-color: #ff8c00 !important;' : ''}" th:href="@{/users(page=${i}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                            <a class="page-link text-dark border-0 bg-light rounded" th:href="@{/users(page=${currentPage + 1}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
 
@@ -100,67 +172,104 @@
                         <h5 class="modal-title fw-bold" style="color: #ff8c00;">
                             <i class="bi bi-person-plus-fill me-2"></i>Thêm người dùng mới
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     
-                    <form th:action="@{/users/add}" method="post" autocomplete="off">
+                    <form id="addUserForm" th:action="@{/users/add}" method="post" autocomplete="off">
                         <div class="modal-body p-4">
+                            <div th:if="${errorGeneral}" class="alert alert-danger py-2 small fw-bold" th:text="${errorGeneral}"></div>
                             <div class="row">
                                 <div class="col-md-6 border-end pe-4">
-                                    <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Thông tin đăng nhập</h6>
-                                    
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Tên đăng nhập <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="userName" required>
+                                        <label class="form-label text-dark fw-bold small">Tài khoản</label>
+                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="userName" th:value="${userNameVal}">
+                                        <div th:if="${errorUserName}" class="text-danger small mt-1 fw-semibold" th:text="${errorUserName}"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Mật khẩu <span class="text-danger">*</span></label>
+                                        <label class="form-label text-dark fw-bold small">Mật khẩu</label>
                                         <div class="input-group bg-light rounded-3 overflow-hidden border-0">
-                                            <input type="password" class="form-control bg-transparent border-0 shadow-none" name="password" required>
+                                            <input type="password" class="form-control bg-transparent border-0 shadow-none" name="password">
                                             <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
                                         </div>
+                                        <div th:if="${errorPassword}" class="text-danger small mt-1 fw-semibold" th:text="${errorPassword}"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Trạng thái</label>
-                                        <div class="form-check form-switch mt-1">
-                                            <input class="form-check-input" type="checkbox" name="isActive" checked>
-                                            <label class="form-check-label text-muted small">Kích hoạt tài khoản ngay</label>
+                                        <label class="form-label text-dark fw-bold small">Xác nhận mật khẩu</label>
+                                        <div class="input-group bg-light rounded-3 overflow-hidden border-0">
+                                            <input type="password" class="form-control bg-transparent border-0 shadow-none" name="confirmPassword" th:value="${confirmPasswordVal}">
+                                            <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
                                         </div>
+                                        <div th:if="${errorConfirmPassword}" class="text-danger small mt-1 fw-semibold" th:text="${errorConfirmPassword}"></div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6 ps-4">
-                                    <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Thông tin chi tiết</h6>
-                                    
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Họ và tên <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" required>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_fullname">Họ và tên</label>
+                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" th:value="${fullNameVal}" id="addFullName">
+                                        <div th:if="${errorFullName}" class="text-danger small mt-1 fw-semibold" th:text="${errorFullName}"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Email</label>
-                                        <input type="email" class="form-control bg-light border-0 shadow-none" name="email">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Phân nhóm / Vai trò <span class="text-danger">*</span></label>
-                                        <div class="d-flex gap-2">
-                                            <select class="form-select bg-light border-0 shadow-none" name="position" required>
-                                                <option value="" selected disabled>-- Chọn nhóm --</option>
-                                                <option value="Admin">Admin</option>
-                                                <option value="Manager">Manager</option>
-                                                <option value="Staff">Staff</option>
-                                            </select>
-                                            <button type="button" class="btn btn-secondary btn-sm rounded-3 shadow-sm px-3" title="Tạo nhóm mới">
-                                                <i class="bi bi-plus-lg"></i>
-                                            </button>
-                                        </div>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_position">Nhóm / Vai trò</label>
+                                        <select class="form-select bg-light border-0 shadow-none" name="position" id="groupSelect">
+                                            <option value="">-- Bỏ qua hoặc Chọn nhóm --</option>
+                                            <option value="Admin" th:selected="${positionVal == 'Admin'}">Admin</option>
+                                            <option value="Manager" th:selected="${positionVal == 'Manager'}">Manager</option>
+                                            <option value="HR" th:selected="${positionVal == 'HR'}">HR</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;">Tạo tài khoản</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
+                            <i class="bi bi-pencil-square me-2"></i>Cập nhật tài khoản
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <form id="editUserForm" th:action="@{/users/edit}" method="post">
+                        <input type="hidden" name="userId" id="editUserId">
+                        
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small" data-i18n="th_fullname">Họ và tên</label>
+                                <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" id="editFullName" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small" data-i18n="th_role">Nhóm / Vai trò</label>
+                                <select class="form-select bg-light border-0 shadow-none" name="position" id="editPosition">
+                                    <option value="">-- Chọn nhóm --</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="HR">HR</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small" data-i18n="th_account_status">Trạng thái tài khoản</label>
+                                <select class="form-select bg-light border-0 shadow-none" name="isEnabled" id="editIsEnabled">
+                                    <option value="true">Bình thường (Cho phép đăng nhập)</option>
+                                    <option value="false">Đã khóa (Banned)</option>
+                                </select>
+                            </div>
+                        </div>
                         
                         <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
-                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Thêm người dùng</button>
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save">Lưu thay đổi</button>
                         </div>
                     </form>
                 </div>
@@ -168,5 +277,103 @@
         </div>
 
     </div>
+
+    <th:block layout:fragment="js-scripts">
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const addUserForm = document.getElementById('addUserForm');
+                const editUserForm = document.getElementById('editUserForm');
+                const addModalEl = document.getElementById('addUserModal');
+
+                // 1. Dọn rác khi Load trang (Nếu không có lỗi Validation)
+                if (!urlParams.has('openAddModal') && addUserForm) {
+                    addUserForm.reset(); 
+                }
+
+                // 2. Mở Modal khi có lỗi
+                if (urlParams.has('openAddModal') && addModalEl) {
+                    const addModal = new bootstrap.Modal(addModalEl);
+                    addModal.show();
+                }
+
+                // 3. Dọn rác mỗi khi đóng Modal (Ấn X, ấn Hủy, ấn ra ngoài)
+                if (addModalEl) {
+                    addModalEl.addEventListener('hidden.bs.modal', function () {
+                        if (addUserForm) addUserForm.reset(); 
+                        this.querySelectorAll('.text-danger, .alert-danger').forEach(msg => msg.style.display = 'none'); 
+                        
+                        const url = new URL(window.location);
+                        url.searchParams.delete('openAddModal');
+                        window.history.replaceState({}, '', url);
+                    });
+                }
+
+                // 4. Validation Form Thêm Mới
+                if (addUserForm) {
+                    addUserForm.addEventListener('submit', function(event) {
+                        const userName = document.querySelector('input[name="userName"]').value.trim();
+                        const password = document.querySelector('input[name="password"]').value;
+                        const confirmPass = document.querySelector('input[name="confirmPassword"]').value;
+                        const fullNameInput = document.getElementById('addFullName');
+                        const groupVal = document.getElementById('groupSelect').value;
+                        
+                        if (!userName || !password || !confirmPass) return; 
+
+                        // Xử lý chuẩn khoảng trắng Họ tên
+                        let fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
+                        fullNameInput.value = fullName;
+
+                        if (!fullName) {
+                            alert("Họ và tên không được bỏ trống!");
+                            event.preventDefault();
+                            return;
+                        }
+
+                        // Chặn ký tự số và đặc biệt
+                        const nameRegex = /^[\p{L}\s]+$/u; 
+                        if (!nameRegex.test(fullName)) {
+                            alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
+                            event.preventDefault();
+                            return;
+                        }
+
+                        if (!groupVal || groupVal.trim() === '') {
+                            const isConfirm = confirm("Bạn chưa chọn nhóm người dùng. Tiếp tục tạo tài khoản?");
+                            if (!isConfirm) event.preventDefault();
+                        }
+                    });
+                }
+
+                // 5. Validation Form Chỉnh Sửa
+                if (editUserForm) {
+                    editUserForm.addEventListener('submit', function(event) {
+                        const fullNameInput = document.getElementById('editFullName');
+                        let fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
+                        fullNameInput.value = fullName;
+
+                        if (!fullName) {
+                            alert("Họ và tên không được bỏ trống!");
+                            event.preventDefault();
+                            return;
+                        }
+
+                        const nameRegex = /^[\p{L}\s]+$/u; 
+                        if (!nameRegex.test(fullName)) {
+                            alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
+                            event.preventDefault();
+                            return;
+                        }
+
+                        const position = document.getElementById('editPosition').value;
+                        if (!position || position.trim() === '') {
+                            const isConfirm = confirm("Bạn chưa chọn Vai trò/Nhóm cho người dùng này. Vẫn tiếp tục lưu?");
+                            if (!isConfirm) event.preventDefault();
+                        }
+                    });
+                }
+            });
+        </script>
+    </th:block>
 </body>
 </html>

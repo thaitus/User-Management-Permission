@@ -13,3 +13,141 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; }
 .input-group.shadow-sm { border-radius: 8px; overflow: hidden; }
 .modal-content { border-radius: 15px !important; }
 .toggle-pwd i.text-primary { color: #ff8c00 !important; }
+
+/* Custom Giao diện Quản lý người dùng */
+.search-pill {
+    border: 1px solid #ff8c00 !important;
+    border-radius: 50px;
+    background-color: #fff;
+}
+.btn-orange {
+    background-color: #ff8c00;
+    color: #fff;
+    border: none;
+}
+.btn-orange:hover { background-color: #e67e00; color: #fff; }
+
+/* Các loại Badge chuẩn màu thiết kế */
+.badge-role { padding: 6px 12px; border-radius: 50px; font-weight: 600; font-size: 12px;}
+.badge-admin { background-color: #fee2e2; color: #dc2626; }
+.badge-manager { background-color: #dbeafe; color: #2563eb; }
+.badge-hr { background-color: #dcfce7; color: #16a34a; }
+
+.badge-status { padding: 6px 12px; border-radius: 50px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+.status-on { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.status-off { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.dot-on { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; }
+.dot-off { width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%; }
+
+/* Table style */
+.table-custom th { color: #6b7280; font-weight: 600; border-bottom: 1px solid #f3f4f6; cursor: pointer;}
+.table-custom td { padding: 15px 10px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.sort-icon { font-size: 12px; margin-left: 5px; color: #9ca3af; }
+.sort-icon.active { color: #ff8c00; }
+
+/* ==========================================
+   CSS CHO TÍNH NĂNG NAVBAR & DARK MODE
+========================================== */
+
+/* Nút Theme Toggle Animation */
+.theme-toggle-btn {
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.theme-toggle-btn:hover {
+    transform: rotate(30deg) scale(1.1);
+}
+
+/* Nút Ngôn ngữ */
+.lang-btn {
+    background: rgba(255, 140, 0, 0.1); /* Nền cam nhạt đồng bộ hệ thống */
+    color: #ff8c00;
+    transition: all 0.3s ease;
+}
+.lang-btn:hover {
+    background: rgba(255, 140, 0, 0.2);
+    transform: translateY(-2px);
+}
+.lang-dropdown .dropdown-item {
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 500;
+}
+.lang-dropdown .dropdown-item:hover, .active-lang {
+    background-color: rgba(255, 140, 0, 0.1) !important;
+    color: #ff8c00 !important;
+}
+
+/* ------------------------------------------
+   DARK MODE OVERRIDES (Ghi đè màu gốc)
+------------------------------------------ */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Biến màu các Card, Bảng và Modal thành Xám đen */
+body.dark-mode .card, 
+body.dark-mode .bg-white,
+body.dark-mode .modal-content,
+body.dark-mode .table-light,
+body.dark-mode .card-header,
+body.dark-mode .card-footer {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+/* Chữ và viền trong Dark Mode */
+body.dark-mode .text-dark { color: #f5f5f5 !important; }
+body.dark-mode .text-muted { color: #a0a0a0 !important; }
+body.dark-mode .border, body.dark-mode .border-bottom { border-color: #2d2d2d !important; }
+
+/* Input và Select Box trong Dark Mode */
+body.dark-mode input.form-control, 
+body.dark-mode select.form-select,
+body.dark-mode .search-pill {
+    background-color: #2d2d2d !important;
+    color: #fff !important;
+    border-color: #444 !important;
+}
+body.dark-mode input.form-control::placeholder { color: #888 !important; }
+
+/* Header của Table trong Dark mode */
+body.dark-mode thead.table-light th {
+    background-color: #252525 !important;
+    border-bottom: 1px solid #444 !important;
+}
+/* --- BỔ SUNG DARK MODE ĐỂ CHỐNG "CHỮ TRẮNG NỀN TRẮNG" --- */
+
+/* 1. Nhuộm đen Sidebar và thanh Navbar trên cùng */
+body.dark-mode .sidebar,
+body.dark-mode .top-navbar {
+    background-color: #1e1e1e !important;
+    border-color: #333 !important;
+}
+
+/* 2. Ép các ô đang dùng nền sáng (bg-light) phải thành xám đậm */
+body.dark-mode .bg-light {
+    background-color: #2d2d2d !important;
+    color: #f5f5f5 !important;
+}
+
+/* 3. Chỉnh màu bảng (Table) ở trang Danh sách */
+body.dark-mode table, 
+body.dark-mode .table {
+    color: #e0e0e0 !important;
+}
+body.dark-mode td, 
+body.dark-mode th {
+    background-color: transparent !important;
+    border-bottom-color: #333 !important;
+}
+/* Hiệu ứng hover chuột vào dòng trong bảng */
+body.dark-mode .table-hover tbody tr:hover td {
+    background-color: #2a2a2a !important;
+}
+
+/* 4. Đổi màu Đồng hồ thành Cam cho nổi bật trong đêm */
+body.dark-mode #realtime-clock {
+    color: #ffffff !important;
+}

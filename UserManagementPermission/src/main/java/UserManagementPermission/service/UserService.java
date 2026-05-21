@@ -4,7 +4,11 @@ import UserManagementPermission.model.User;
 import UserManagementPermission.repository.UserRepository;
 
 import org.springframework.stereotype.Service;
-
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 @Service
 public class UserService {
 
@@ -56,5 +60,40 @@ public class UserService {
     }
     public void changePassword(String newPass, int userId) {
         userRepository.changePassword(newPass, userId);
+    }
+    public List<User> getAllUsers() {
+        // Hàm findAll() là hàm mặc định có sẵn của JpaRepository, 
+        // không vi phạm quy tắc Native Query của dự án đâu, ông yên tâm!
+        return userRepository.findAll(); 
+    }
+    public List<User> searchUsers(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return userRepository.findAll(); // Nếu không gõ gì thì lấy tất cả
+        }
+        return userRepository.searchUsers(keyword.trim());
+    }
+    public boolean isUserNameExists(String userName) {
+        return userRepository.countByUserName(userName) > 0;
+    }
+
+    public void createUser(String userName, String pass, String fullName, String position) {
+        userRepository.insertUser(userName, pass, fullName, position);
+    }
+
+    public Page<User> getUsersWithPagination(String keyword, int page, String sortBy, String sortDir) {
+        // Khai báo phân trang (mặc định 10 dòng/trang). 
+        // BỎ HẲN thằng Sort đi vì mình đã cấu hình Sort bằng CASE WHEN dưới Native Query rồi.
+        Pageable pageable = PageRequest.of(page, 10); 
+        
+        // Truyền đủ 4 tham số vào Repository
+        return userRepository.findAllUsersNative(keyword, sortBy, sortDir, pageable);
+    }
+
+    public void deleteUser(int userId) {
+        userRepository.deleteUser(userId);
+    }
+
+    public void updateUserByAdmin(int userId, String fullName, String position, boolean isEnabled) {
+        userRepository.updateUserByAdmin(userId, fullName, position, isEnabled);
     }
 }

@@ -107,4 +107,93 @@ document.addEventListener("DOMContentLoaded", function() {
             window.history.replaceState({}, '', url);
         });
     }
+    // 3. Dọn dẹp Modal (Dùng chung cho Đổi Pass và Thêm User)
+    const modalsToClean = ['changePassModal', 'addUserModal'];
+    
+    modalsToClean.forEach(modalId => {
+        const modalEl = document.getElementById(modalId);
+        if (modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                // Xóa input
+                this.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                    if(input.type === 'text' && input.name.toLowerCase().includes('pass')) {
+                        input.type = 'password'; 
+                    }
+                });
+
+                // Reset Select box về mặc định
+                this.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+
+                // Ẩn các dòng báo lỗi màu đỏ
+                this.querySelectorAll('.text-danger, .alert-danger').forEach(msg => msg.style.display = 'none');
+                
+                // Trả icon mắt thần về ban đầu
+                this.querySelectorAll('.toggle-pwd i').forEach(icon => {
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                    icon.classList.remove('text-primary');
+                });
+
+                // Xóa param trên URL (openModal hoặc openAddModal)
+                const url = new URL(window.location);
+                url.searchParams.delete('openModal');
+                url.searchParams.delete('openAddModal');
+                window.history.replaceState({}, '', url);
+            });
+        }
+    });
+    // Hàm nhồi dữ liệu vào Modal Sửa User
+    window.fillEditModal = function(button) {
+        // 1. Rút dữ liệu từ cái nút vừa bị bấm
+        const id = button.getAttribute('data-id');
+        const fullName = button.getAttribute('data-fullname');
+        const position = button.getAttribute('data-position');
+        const isEnabled = button.getAttribute('data-isenabled'); // Lấy isEnabled
+
+        // 2. Nhồi vào các ô Input trong Modal
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editFullName').value = fullName;
+        
+        // Xử lý Select box Chức vụ
+        const positionSelect = document.getElementById('editPosition');
+        positionSelect.value = (position && position !== 'null') ? position : '';
+
+        // Xử lý Select box Trạng thái Khóa/Mở khóa
+        document.getElementById('editIsEnabled').value = isEnabled;
+    };
+    const editUserForm = document.getElementById('editUserForm');
+    
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', function(event) {
+            const fullNameInput = document.getElementById('editFullName');
+            
+            // 1. Cắt khoảng trắng 2 đầu và thay nhiều khoảng trắng ở giữa thành 1
+            let fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
+            fullNameInput.value = fullName; // Đẩy ngược lại input cho đẹp
+
+            // 2. Báo lỗi nếu bỏ trống
+            if (!fullName) {
+                alert("Họ và tên không được bỏ trống!");
+                event.preventDefault(); // Chặn gửi form
+                return;
+            }
+
+            // 3. Kiểm tra định dạng (Chỉ cho phép chữ cái và khoảng trắng, hỗ trợ tiếng Việt)
+            const nameRegex = /^[\p{L}\s]+$/u; 
+            if (!nameRegex.test(fullName)) {
+                alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
+                event.preventDefault();
+                return;
+            }
+
+            // 4. Cảnh báo nếu không chọn Nhóm/Vai trò
+            const position = document.getElementById('editPosition').value;
+            if (!position || position.trim() === '') {
+                const isConfirm = confirm("Bạn chưa chọn Vai trò/Nhóm cho người dùng này. Vẫn tiếp tục lưu?");
+                if (!isConfirm) {
+                    event.preventDefault();
+                }
+            }
+        });
+    }
 });

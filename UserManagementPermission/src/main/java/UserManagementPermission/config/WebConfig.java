@@ -1,6 +1,8 @@
 package UserManagementPermission.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -23,5 +25,15 @@ public class WebConfig implements WebMvcConfigurer {
         // Spring Boot thỉnh thoảng sẽ lờ đi cấu hình mặc định nếu ta khai báo WebMvcConfigurer
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/");
+    }
+    
+    @Autowired
+    private AuthInterceptor authInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/**") // Áp dụng cho mọi URL
+                .excludePathPatterns("/css/**", "/js/**", "/images/**"); // Trừ tài nguyên tĩnh
     }
 }
