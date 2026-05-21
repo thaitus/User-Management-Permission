@@ -37,6 +37,11 @@
                     <i class="bi bi-person-lines-fill me-2"></i> Quản lý Người dùng
                 </a>
             </li>
+            <li th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canView']}">
+                <a th:href="@{/groups}" th:classappend="${currentPage == 'groups' ? 'active' : ''}" data-i18n="nav_groups">
+                    <i class="bi bi-collection-fill me-2"></i> Nhóm người dùng
+                </a>
+            </li>
         </ul>
     </nav>
 

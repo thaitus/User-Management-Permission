@@ -2,12 +2,13 @@ package UserManagementPermission.controller;
 
 import UserManagementPermission.model.User;
 import UserManagementPermission.service.UserService;
+import UserManagementPermission.service.GroupService; // BỔ SUNG IMPORT NÀY
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model; // <--- Import chuẩn ở đây
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,17 +20,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
     
     private final UserService userService;
+    private final GroupService groupService; // KHAI BÁO THÊM GroupService
 
-    public UserController(UserService userService) { 
+    // Tiêm cả 2 service vào qua Constructor
+    public UserController(UserService userService, GroupService groupService) { 
         this.userService = userService; 
+        this.groupService = groupService; 
     }
 
     @GetMapping
     public String showUserList(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "userID") String sortBy, // Đổi mặc định thành userID
-            @RequestParam(defaultValue = "none") String sortDir,  // Đổi mặc định thành none
+            @RequestParam(defaultValue = "userID") String sortBy, 
+            @RequestParam(defaultValue = "none") String sortDir,  
             HttpSession session, Model model) {
         
         if (session.getAttribute("loggedInUser") == null) return "redirect:/login";
@@ -43,11 +47,17 @@ public class UserController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         model.addAttribute("keyword", keyword);
-        model.addAttribute("menuPage", "users"); // Đổi tên để tránh trùng với biến page
+        model.addAttribute("menuPage", "users"); 
         model.addAttribute("totalElements", userPage.getTotalElements());
+        
+        // ĐẠI TU: Kéo toàn bộ nhóm từ DB lên và đẩy xuống View
+        model.addAttribute("allGroups", groupService.getAllGroups());
         
         return "users";
     }
+
+    // ... (Các hàm addUser, deleteUser, editUser ông GIỮ NGUYÊN 100% như cũ)
+    
     @PostMapping("/add")
     public String addUser(
             @RequestParam("userName") String userName,
@@ -56,7 +66,7 @@ public class UserController {
             @RequestParam("fullName") String fullName,
             @RequestParam(value = "position", required = false) String position,
             RedirectAttributes ra) {
-
+        // ... (Giữ nguyên)
         boolean hasError = false;
 
         // UTC_010: Bỏ trống tất cả
@@ -126,7 +136,6 @@ public class UserController {
             userService.deleteUser(userId);
             ra.addFlashAttribute("successMsg", "Đã xóa tài khoản thành công!");
         } catch (Exception e) {
-            // Đề phòng tài khoản này đã dính khóa ngoại (Foreign Key) ở bảng khác
             ra.addFlashAttribute("errorGeneral", "Không thể xóa tài khoản này vì dữ liệu đang được liên kết!");
         }
         return "redirect:/users";
@@ -140,22 +149,18 @@ public class UserController {
             @RequestParam(value = "isEnabled", defaultValue = "true") boolean isEnabled,
             RedirectAttributes ra) {
         
-        // 1. Tự động cắt khoảng trắng thừa (Kể cả khoảng trắng giữa các từ)
         String trimmedName = (fullName != null) ? fullName.trim().replaceAll("\\s+", " ") : "";
 
-        // 2. Chặn lỗi bỏ trống
         if (trimmedName.isEmpty()) {
             ra.addFlashAttribute("errorGeneral", "Cập nhật thất bại: Họ tên không được bỏ trống!");
             return "redirect:/users";
         }
 
-        // 3. Chặn số và ký tự đặc biệt (Chỉ lấy chữ Unicode và khoảng trắng)
         if (!trimmedName.matches("^[a-zA-Z\\p{L}\\s]+$")) {
             ra.addFlashAttribute("errorGeneral", "Cập nhật thất bại: Họ tên không được chứa số hay ký tự đặc biệt!");
             return "redirect:/users";
         }
 
-        // 4. Nếu vượt qua mọi bài test, tiến hành Update
         userService.updateUserByAdmin(userId, trimmedName, position, isEnabled);
         ra.addFlashAttribute("successMsg", "Đã cập nhật thông tin tài khoản thành công!");
         

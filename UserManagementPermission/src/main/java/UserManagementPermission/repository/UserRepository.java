@@ -102,4 +102,30 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Query(value = "UPDATE `User` SET fullName = :fullName, position = :position, isEnabled = :isEnabled WHERE userID = :userId", nativeQuery = true)
     void updateUserByAdmin(@Param("userId") int userId, @Param("fullName") String fullName, @Param("position") String position, @Param("isEnabled") boolean isEnabled);
+
+    // 1. Lấy danh sách user ĐANG NẰM TRONG 1 nhóm cụ thể
+    @Query(value = "SELECT u.* FROM `User` u JOIN `usergroup` ug ON u.userID = ug.userID WHERE ug.groupID = :groupId", nativeQuery = true)
+    List<User> findUsersByGroupId(@org.springframework.data.repository.query.Param("groupId") int groupId);
+
+    // 2. Lấy danh sách user CHƯA CÓ NHÓM (Dùng LEFT JOIN để tìm những user không có mặt trong bảng usergroup)
+    @Query(value = "SELECT u.* FROM `User` u LEFT JOIN `usergroup` ug ON u.userID = ug.userID WHERE ug.groupID IS NULL", nativeQuery = true)
+    List<User> findUsersWithoutGroup();
+
+    // 3. Xóa user khỏi bảng usergroup
+    @org.springframework.data.jpa.repository.Modifying
+    @jakarta.transaction.Transactional
+    @Query(value = "DELETE FROM `usergroup` WHERE userID = :userId", nativeQuery = true)
+    void removeUserFromGroup(@org.springframework.data.repository.query.Param("userId") int userId);
+
+    // 4. Thêm user vào bảng usergroup
+    @org.springframework.data.jpa.repository.Modifying
+    @jakarta.transaction.Transactional
+    @Query(value = "INSERT INTO `usergroup` (userID, groupID) VALUES (:userId, :groupId)", nativeQuery = true)
+    void addUserToGroup(@org.springframework.data.repository.query.Param("userId") int userId, @org.springframework.data.repository.query.Param("groupId") int groupId);
+
+    // 5. Cập nhật lại cột position trong bảng User để đồng bộ hiển thị
+    @org.springframework.data.jpa.repository.Modifying
+    @jakarta.transaction.Transactional
+    @Query(value = "UPDATE `User` SET position = :groupName WHERE userID = :userId", nativeQuery = true)
+    void updateUserPosition(@org.springframework.data.repository.query.Param("userId") int userId, @org.springframework.data.repository.query.Param("groupName") String groupName);
 }

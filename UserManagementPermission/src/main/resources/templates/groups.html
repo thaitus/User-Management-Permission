@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Quản lý Nhóm người dùng - IVS System</title>
+</head>
+<body>
+
+    <span layout:fragment="page-header" class="d-none"></span>
+
+    <div layout:fragment="content">
+        
+        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;" data-i18n="title_group">
+            Quản lý nhóm người dùng
+        </h2>
+
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 border-start border-5 border-success rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2"></i><span class="text-dark fw-semibold" th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 border-start border-5 border-danger rounded-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i><span class="text-dark fw-semibold" th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 overflow-hidden p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom">
+                
+                <form th:action="@{/groups}" method="get" class="m-0">
+                    <input type="hidden" name="sortBy" th:value="${sortBy}">
+                    <input type="hidden" name="sortDir" th:value="${sortDir}">
+                    <div class="input-group input-group-sm rounded-pill overflow-hidden border px-2 py-1" style="border-color: #ff8c00 !important; width: 320px;">
+                        <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên nhóm..." data-i18n="search_group_ph">
+                    </div>
+                </form>
+                
+                <button th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canEdit']}"
+                        class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" 
+                        style="background-color: #ff8c00; border: none;" 
+                        data-bs-toggle="modal" data-bs-target="#addGroupModal">
+                    <i class="bi bi-plus-circle-fill"></i> <span data-i18n="btn_add_group">Thêm Nhóm</span>
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4 text-muted fw-bold" style="width: 10%;" data-i18n="th_stt">STT</th>
+                            
+                            <th style="width: 50%;">
+                                <a th:href="@{/groups(page=${currentPage}, sortBy='groupName', sortDir=${sortBy == 'groupName' and sortDir == 'asc' ? 'desc' : (sortBy == 'groupName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_group_name">Tên Nhóm</span>
+                                    <i th:if="${sortBy != 'groupName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'groupName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'groupName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th style="width: 20%;">
+                                <a th:href="@{/groups(page=${currentPage}, sortBy='memberCount', sortDir=${sortBy == 'memberCount' and sortDir == 'asc' ? 'desc' : (sortBy == 'memberCount' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
+                                    <span data-i18n="th_member_count">Số lượng</span>
+                                    <i th:if="${sortBy != 'memberCount' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'memberCount' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                    <i th:if="${sortBy == 'memberCount' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
+                                </a>
+                            </th>
+                            
+                            <th th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canEdit']}"
+                                class="text-end pe-4 text-muted fw-bold" style="width: 20%;" data-i18n="th_action">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="group, iterStat : ${groupList}">
+                            <td class="ps-4 text-muted fw-bold" th:text="${(currentPage * 10) + iterStat.count}"></td>
+                            
+                            <td>
+                                <span class="badge bg-light text-dark border px-3 py-2 shadow-sm fs-6" th:text="${group.groupName}">Tên Nhóm</span>
+                            </td>
+                            
+                            <td class="fw-medium text-dark">
+                                <i class="bi bi-person-fill text-muted me-1"></i>
+                                <span th:text="${group.memberCount}"></span> người
+                            </td>
+                            
+                            <td th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canEdit']}" 
+                                class="text-end pe-4">
+                                <a th:href="@{/groups/{id}/members(id=${group.groupID})}" 
+                                    class="btn btn-sm btn-outline-info rounded-circle me-1 shadow-sm" 
+                                    title="Quản lý thành viên" data-i18n-title="btn_manage_members">
+                                    <i class="bi bi-people-fill"></i>
+                                </a>
+                                
+                                <button class="btn btn-sm btn-outline-primary rounded-circle me-1 shadow-sm" 
+                                        title="Chỉnh sửa" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editGroupModal"
+                                        th:attr="data-id=${group.groupID}, data-name=${group.groupName}"
+                                        onclick="fillEditGroupModal(this)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                
+                                <form th:action="@{/groups/delete}" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhóm này? Các tài khoản thuộc nhóm sẽ mất quyền truy cập!');">
+                                    <input type="hidden" name="groupId" th:value="${group.groupID}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" title="Xóa"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(groupList)}">
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="bi bi-inboxes fs-3 d-block mb-2 opacity-50"></i>
+                                Không tìm thấy dữ liệu nhóm.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-4 px-2">
+                <span class="text-muted small">Đang hiển thị <span th:text="${#lists.size(groupList)}"></span> / <span th:text="${totalElements}"></span> nhóm</span>
+                <nav th:if="${totalPages > 1}">
+                    <ul class="pagination pagination-sm mb-0 shadow-sm gap-1">
+                        <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                            <a class="page-link text-dark border-0 bg-light rounded" th:href="@{/groups(page=${currentPage - 1}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i ? 'active' : ''}">
+                            <a class="page-link border-0 rounded fw-bold" th:classappend="${currentPage == i ? 'text-white' : 'text-dark bg-light'}" th:style="${currentPage == i ? 'background-color: #ff8c00 !important;' : ''}" th:href="@{/groups(page=${i}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                            <a class="page-link text-dark border-0 bg-light rounded" th:href="@{/groups(page=${currentPage + 1}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="modal fade" id="addGroupModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
+                            <i class="bi bi-plus-circle-fill me-2"></i><span data-i18n="modal_add_group">Thêm Nhóm Mới</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <form th:action="@{/groups/add}" method="post">
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small" data-i18n="lbl_group_name">Tên Nhóm</label>
+                                <input type="text" class="form-control bg-light border-0 shadow-none" name="groupName" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save">Thêm Mới</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editGroupModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
+                            <i class="bi bi-pencil-square me-2"></i><span data-i18n="modal_edit_group">Sửa Tên Nhóm</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    
+                    <form th:action="@{/groups/edit}" method="post">
+                        <input type="hidden" name="groupId" id="editGroupId">
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold small" data-i18n="lbl_group_name">Tên Nhóm</label>
+                                <input type="text" class="form-control bg-light border-0 shadow-none" name="groupName" id="editGroupName" required autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save">Lưu Cập Nhật</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block layout:fragment="js-scripts">
+        <script>
+            // Đổ dữ liệu từ Button vào Modal Sửa
+            function fillEditGroupModal(button) {
+                const groupId = button.getAttribute('data-id');
+                const groupName = button.getAttribute('data-name');
+                
+                document.getElementById('editGroupId').value = groupId;
+                document.getElementById('editGroupName').value = groupName;
+            }
+        </script>
+    </th:block>
+</body>
+</html>

@@ -96,4 +96,33 @@ public class UserService {
     public void updateUserByAdmin(int userId, String fullName, String position, boolean isEnabled) {
         userRepository.updateUserByAdmin(userId, fullName, position, isEnabled);
     }
+
+    // Lấy danh sách thành viên (Để Controller gọi)
+    public List<User> getUsersByGroupId(int groupId) {
+        return userRepository.findUsersByGroupId(groupId);
+    }
+
+    public List<User> getUsersWithoutGroup() {
+        return userRepository.findUsersWithoutGroup();
+    }
+
+    // Xử lý XÓA thành viên khỏi nhóm
+    @jakarta.transaction.Transactional
+    public void removeUserFromGroup(int userId) {
+        userRepository.removeUserFromGroup(userId);
+        userRepository.updateUserPosition(userId, "Chưa có"); // Reset lại Vai trò thành rỗng
+    }
+
+    // Xử lý THÊM NHIỀU thành viên vào nhóm
+    @jakarta.transaction.Transactional
+    public void addUsersToGroup(int groupId, String groupName, List<Integer> userIds) {
+        if (userIds != null && !userIds.isEmpty()) {
+            for (int userId : userIds) {
+                // Đảm bảo xóa sạch liên kết cũ (nếu có lỗi kẹt dữ liệu) trước khi thêm mới
+                userRepository.removeUserFromGroup(userId); 
+                userRepository.addUserToGroup(userId, groupId);
+                userRepository.updateUserPosition(userId, groupName); // Đồng bộ tên nhóm vào cột position
+            }
+        }
+    }
 }

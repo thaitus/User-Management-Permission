@@ -11,7 +11,7 @@
 
     <div layout:fragment="content">
         
-        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;" data-i18n="title_user">
+        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;">
             Quản lý người dùng
         </h2>
 
@@ -27,15 +27,12 @@
                     <input type="hidden" name="sortDir" th:value="${sortDir}">
                     <div class="input-group input-group-sm rounded-pill overflow-hidden border px-2 py-1" style="border-color: #ff8c00 !important; width: 320px;">
                         <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên, tài khoản... (Nhấn Enter)" data-i18n="search_ph">
+                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên, tài khoản... (Nhấn Enter)">
                     </div>
                 </form>
                 
-                <button th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}"
-                        class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" 
-                        style="background-color: #ff8c00; border: none;" 
-                        data-bs-toggle="modal" data-bs-target="#addUserModal">
-                    <i class="bi bi-person-plus-fill"></i> <span data-i18n="btn_add">Thêm mới</span>
+                <button class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi bi-person-plus-fill"></i> Thêm mới
                 </button>
             </div>
             
@@ -43,11 +40,11 @@
                 <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4 text-muted fw-bold" style="width: 8%;" data-i18n="th_stt">STT</th>
+                            <th class="ps-4 text-muted fw-bold" style="width: 8%;">STT</th>
                             
                             <th style="width: 25%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='userName', sortDir=${sortBy == 'userName' and sortDir == 'asc' ? 'desc' : (sortBy == 'userName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    <span data-i18n="th_account">Tài khoản</span>
+                                    Tài khoản
                                     <i th:if="${sortBy != 'userName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'userName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'userName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -56,7 +53,7 @@
                             
                             <th style="width: 20%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='fullName', sortDir=${sortBy == 'fullName' and sortDir == 'asc' ? 'desc' : (sortBy == 'fullName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    <span data-i18n="th_fullname">Họ và Tên</span>
+                                    Họ và Tên
                                     <i th:if="${sortBy != 'fullName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'fullName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'fullName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -65,7 +62,7 @@
                             
                             <th style="width: 15%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='position', sortDir=${sortBy == 'position' and sortDir == 'asc' ? 'desc' : (sortBy == 'position' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    <span data-i18n="th_role">Vai trò</span>
+                                    Vai trò
                                     <i th:if="${sortBy != 'position' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'position' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'position' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -74,15 +71,14 @@
                             
                             <th style="width: 17%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='isActive', sortDir=${sortBy == 'isActive' and sortDir == 'asc' ? 'desc' : (sortBy == 'isActive' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    <span data-i18n="th_status">Trạng thái</span>
+                                    Trạng thái
                                     <i th:if="${sortBy != 'isActive' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'isActive' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'isActive' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                 </a>
                             </th>
                             
-                            <th th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}"
-                                class="text-end pe-4 text-muted fw-bold" style="width: 15%;" data-i18n="th_action">Thao tác</th>
+                            <th class="text-end pe-4 text-muted fw-bold" style="width: 15%;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -105,10 +101,8 @@
                             <td class="fw-medium text-dark" th:text="${user.fullName}"></td>
                             
                             <td>
-                                <span th:if="${user.position == 'Admin' or user.position == 'Tổng Giám Đốc'}" class="badge bg-danger rounded-pill px-3 py-2 shadow-sm" th:text="${user.position}"></span>
-                                <span th:if="${user.position == 'Manager'}" class="badge bg-primary rounded-pill px-3 py-2 shadow-sm">Manager</span>
-                                <span th:if="${user.position == 'HR'}" class="badge bg-success rounded-pill px-3 py-2 shadow-sm">HR</span>
-                                <span th:if="${user.position != 'Admin' and user.position != 'Tổng Giám Đốc' and user.position != 'Manager' and user.position != 'HR'}" class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm" th:text="${user.position != null ? user.position : 'Chưa có'}"></span>
+                                <span th:if="${user.position != null and user.position != ''}" class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm" th:text="${user.position}"></span>
+                                <span th:unless="${user.position != null and user.position != ''}" class="badge bg-light text-dark border rounded-pill px-3 py-2 shadow-sm">Chưa có</span>
                             </td>
                             
                             <td>
@@ -120,8 +114,7 @@
                                 </span>
                             </td>
                             
-                            <td th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canEdit']}" 
-                                class="text-end pe-4">
+                            <td class="text-end pe-4">
                                 <button class="btn btn-sm btn-outline-primary rounded-circle me-1 shadow-sm" 
                                         title="Chỉnh sửa" 
                                         data-bs-toggle="modal" 
@@ -204,31 +197,32 @@
                                 </div>
                                 <div class="col-md-6 ps-4">
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_fullname">Họ và tên</label>
-                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" th:value="${fullNameVal}" id="addFullName">
+                                        <label class="form-label text-dark fw-bold small">Họ và tên</label>
+                                        <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" th:value="${fullNameVal}">
                                         <div th:if="${errorFullName}" class="text-danger small mt-1 fw-semibold" th:text="${errorFullName}"></div>
                                     </div>
+                                    
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_position">Nhóm / Vai trò</label>
+                                        <label class="form-label text-dark fw-bold small">Nhóm / Vai trò</label>
                                         <select class="form-select bg-light border-0 shadow-none" name="position" id="groupSelect">
                                             <option value="">-- Bỏ qua hoặc Chọn nhóm --</option>
-                                            <option value="Admin" th:selected="${positionVal == 'Admin'}">Admin</option>
-                                            <option value="Manager" th:selected="${positionVal == 'Manager'}">Manager</option>
-                                            <option value="HR" th:selected="${positionVal == 'HR'}">HR</option>
+                                            <option th:each="g : ${allGroups}" 
+                                                    th:value="${g.groupName}" 
+                                                    th:text="${g.groupName}" 
+                                                    th:selected="${positionVal == g.groupName}"></option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
-                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;">Tạo tài khoản</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
         <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg rounded-4">
@@ -252,9 +246,9 @@
                                 <label class="form-label text-dark fw-bold small" data-i18n="th_role">Nhóm / Vai trò</label>
                                 <select class="form-select bg-light border-0 shadow-none" name="position" id="editPosition">
                                     <option value="">-- Chọn nhóm --</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="HR">HR</option>
+                                    <option th:each="g : ${allGroups}" 
+                                            th:value="${g.groupName}" 
+                                            th:text="${g.groupName}"></option>
                                 </select>
                             </div>
 
@@ -283,7 +277,6 @@
             document.addEventListener("DOMContentLoaded", function() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const addUserForm = document.getElementById('addUserForm');
-                const editUserForm = document.getElementById('editUserForm');
                 const addModalEl = document.getElementById('addUserModal');
 
                 // 1. Dọn rác khi Load trang (Nếu không có lỗi Validation)
@@ -300,74 +293,27 @@
                 // 3. Dọn rác mỗi khi đóng Modal (Ấn X, ấn Hủy, ấn ra ngoài)
                 if (addModalEl) {
                     addModalEl.addEventListener('hidden.bs.modal', function () {
-                        if (addUserForm) addUserForm.reset(); 
-                        this.querySelectorAll('.text-danger, .alert-danger').forEach(msg => msg.style.display = 'none'); 
+                        if (addUserForm) addUserForm.reset(); // Xóa sạch input
+                        this.querySelectorAll('.text-danger, .alert-danger').forEach(msg => msg.style.display = 'none'); // Ẩn các dòng lỗi cũ
                         
+                        // Xóa chữ openAddModal trên URL để không bị dính vòng lặp mở lại
                         const url = new URL(window.location);
                         url.searchParams.delete('openAddModal');
                         window.history.replaceState({}, '', url);
                     });
                 }
 
-                // 4. Validation Form Thêm Mới
+                // 4. Xác nhận Nhóm (Giữ nguyên)
                 if (addUserForm) {
                     addUserForm.addEventListener('submit', function(event) {
                         const userName = document.querySelector('input[name="userName"]').value.trim();
                         const password = document.querySelector('input[name="password"]').value;
                         const confirmPass = document.querySelector('input[name="confirmPassword"]').value;
-                        const fullNameInput = document.getElementById('addFullName');
+                        const fullName = document.querySelector('input[name="fullName"]').value.trim();
                         const groupVal = document.getElementById('groupSelect').value;
-                        
-                        if (!userName || !password || !confirmPass) return; 
-
-                        // Xử lý chuẩn khoảng trắng Họ tên
-                        let fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
-                        fullNameInput.value = fullName;
-
-                        if (!fullName) {
-                            alert("Họ và tên không được bỏ trống!");
-                            event.preventDefault();
-                            return;
-                        }
-
-                        // Chặn ký tự số và đặc biệt
-                        const nameRegex = /^[\p{L}\s]+$/u; 
-                        if (!nameRegex.test(fullName)) {
-                            alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
-                            event.preventDefault();
-                            return;
-                        }
-
+                        if (!userName || !password || !confirmPass || !fullName) return; 
                         if (!groupVal || groupVal.trim() === '') {
                             const isConfirm = confirm("Bạn chưa chọn nhóm người dùng. Tiếp tục tạo tài khoản?");
-                            if (!isConfirm) event.preventDefault();
-                        }
-                    });
-                }
-
-                // 5. Validation Form Chỉnh Sửa
-                if (editUserForm) {
-                    editUserForm.addEventListener('submit', function(event) {
-                        const fullNameInput = document.getElementById('editFullName');
-                        let fullName = fullNameInput.value.trim().replace(/\s+/g, ' ');
-                        fullNameInput.value = fullName;
-
-                        if (!fullName) {
-                            alert("Họ và tên không được bỏ trống!");
-                            event.preventDefault();
-                            return;
-                        }
-
-                        const nameRegex = /^[\p{L}\s]+$/u; 
-                        if (!nameRegex.test(fullName)) {
-                            alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
-                            event.preventDefault();
-                            return;
-                        }
-
-                        const position = document.getElementById('editPosition').value;
-                        if (!position || position.trim() === '') {
-                            const isConfirm = confirm("Bạn chưa chọn Vai trò/Nhóm cho người dùng này. Vẫn tiếp tục lưu?");
                             if (!isConfirm) event.preventDefault();
                         }
                     });
