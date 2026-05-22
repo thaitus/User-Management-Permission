@@ -11,7 +11,7 @@
 
     <div layout:fragment="content">
         
-        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;">
+        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;" data-i18n="title_user">
             Quản lý người dùng
         </h2>
 
@@ -27,11 +27,11 @@
                     <input type="hidden" name="sortDir" th:value="${sortDir}">
                     <div class="input-group input-group-sm rounded-pill overflow-hidden border px-2 py-1" style="border-color: #ff8c00 !important; width: 320px;">
                         <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên, tài khoản... (Nhấn Enter)">
+                        <input type="text" class="form-control border-0 shadow-none bg-transparent" name="keyword" th:value="${keyword}" placeholder="Tìm tên, tài khoản... (Nhấn Enter)" data-i18n="search_ph">
                     </div>
                 </form>
                 
-                <button class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <button class="btn text-white rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#addUserModal" data-i18n="btn_add">
                     <i class="bi bi-person-plus-fill"></i> Thêm mới
                 </button>
             </div>
@@ -40,11 +40,11 @@
                 <table class="table table-hover align-middle mb-0" style="table-layout: fixed; width: 100%;">
                     <thead class="table-light">
                         <tr>
-                            <th class="ps-4 text-muted fw-bold" style="width: 8%;">STT</th>
+                            <th class="ps-4 text-muted fw-bold" style="width: 8%;" data-i18n="th_stt">STT</th>
                             
                             <th style="width: 25%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='userName', sortDir=${sortBy == 'userName' and sortDir == 'asc' ? 'desc' : (sortBy == 'userName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    Tài khoản
+                                    <span data-i18n="th_account">Tài khoản</span>
                                     <i th:if="${sortBy != 'userName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'userName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'userName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -53,7 +53,7 @@
                             
                             <th style="width: 20%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='fullName', sortDir=${sortBy == 'fullName' and sortDir == 'asc' ? 'desc' : (sortBy == 'fullName' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    Họ và Tên
+                                    <span data-i18n="th_fullname">Họ và Tên</span>
                                     <i th:if="${sortBy != 'fullName' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'fullName' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'fullName' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -62,7 +62,7 @@
                             
                             <th style="width: 15%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='position', sortDir=${sortBy == 'position' and sortDir == 'asc' ? 'desc' : (sortBy == 'position' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    Vai trò
+                                    <span data-i18n="th_role">Vai trò</span>
                                     <i th:if="${sortBy != 'position' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'position' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'position' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
@@ -71,14 +71,14 @@
                             
                             <th style="width: 17%;">
                                 <a th:href="@{/users(page=${currentPage}, sortBy='isActive', sortDir=${sortBy == 'isActive' and sortDir == 'asc' ? 'desc' : (sortBy == 'isActive' and sortDir == 'desc' ? 'none' : 'asc')}, keyword=${keyword})}" class="text-decoration-none text-dark fw-bold d-inline-flex align-items-center gap-1">
-                                    Trạng thái
+                                    <span data-i18n="th_status">Trạng thái</span>
                                     <i th:if="${sortBy != 'isActive' or sortDir == 'none'}" class="bi bi-arrow-down-up text-muted" style="font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'isActive' and sortDir == 'asc'}" class="bi bi-arrow-up" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                     <i th:if="${sortBy == 'isActive' and sortDir == 'desc'}" class="bi bi-arrow-down" style="color: #ff8c00; font-size: 0.8rem;"></i>
                                 </a>
                             </th>
                             
-                            <th class="text-end pe-4 text-muted fw-bold" style="width: 15%;">Thao tác</th>
+                            <th class="text-end pe-4 text-muted fw-bold" style="width: 15%;" data-i18n="th_action">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,7 +93,8 @@
                                     </div>
                                     <div>
                                         <div class="fw-bold text-dark" th:text="${user.userName}"></div>
-                                        <div class="text-muted small" th:text="${user.email != null ? user.email : 'Chưa cập nhật email'}"></div>
+                                        <div class="text-muted small" th:text="${user.email}" th:unless="${user.email == null || user.email == ''}"></div>
+                                        <div class="text-muted small" th:if="${user.email == null || user.email == ''}" data-i18n="lbl_no_email">Chưa cập nhật email</div>
                                     </div>
                                 </div>
                             </td>
@@ -102,14 +103,14 @@
                             
                             <td>
                                 <span th:if="${user.position != null and user.position != ''}" class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm" th:text="${user.position}"></span>
-                                <span th:unless="${user.position != null and user.position != ''}" class="badge bg-light text-dark border rounded-pill px-3 py-2 shadow-sm">Chưa có</span>
+                                <span th:unless="${user.position != null and user.position != ''}" class="badge bg-light text-dark border rounded-pill px-3 py-2 shadow-sm" data-i18n="lbl_no_group">Chưa có</span>
                             </td>
                             
                             <td>
-                                <span th:if="${user.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2">
+                                <span th:if="${user.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2" data-i18n="status_online">
                                     <i class="bi bi-circle-fill text-success" style="font-size: 0.4rem;"></i> Online
                                 </span>
-                                <span th:unless="${user.isActive}" class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2">
+                                <span th:unless="${user.isActive}" class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 rounded-pill d-inline-flex align-items-center gap-2" data-i18n="status_offline">
                                     <i class="bi bi-circle-fill text-danger" style="font-size: 0.4rem;"></i> Offline
                                 </span>
                             </td>
@@ -117,6 +118,7 @@
                             <td class="text-end pe-4">
                                 <button class="btn btn-sm btn-outline-primary rounded-circle me-1 shadow-sm" 
                                         title="Chỉnh sửa" 
+                                        data-i18n-title="btn_edit"
                                         data-bs-toggle="modal" 
                                         data-bs-target="#editUserModal"
                                         th:attr="data-id=${user.userID}, data-fullname=${user.fullName}, data-position=${user.position}, data-isenabled=${user.isEnabled}"
@@ -124,14 +126,14 @@
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 
-                                <form th:action="@{/users/delete}" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này không? Hành động này không thể hoàn tác!');">
+                                <form th:action="@{/users/delete}" method="post" class="d-inline" onsubmit="return confirm(getI18nText('confirm_delete_user'));">
                                     <input type="hidden" name="userId" th:value="${user.userID}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" title="Xóa"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" data-i18n-title="btn_remove" title="Xóa"><i class="bi bi-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(userList)}">
-                            <td colspan="6" class="text-center py-5 text-muted">
+                            <td colspan="6" class="text-center py-5 text-muted" data-i18n="msg_no_users">
                                 <i class="bi bi-search fs-3 d-block mb-2 opacity-50"></i>
                                 Không tìm thấy dữ liệu.
                             </td>
@@ -141,7 +143,11 @@
             </div>
             
             <div class="d-flex justify-content-between align-items-center mt-4 px-2">
-                <span class="text-muted small">Đang hiển thị <span th:text="${#lists.size(userList)}"></span> / <span th:text="${totalElements}"></span> người dùng</span>
+                <span class="text-muted small">
+                    <span data-i18n="lbl_showing">Đang hiển thị</span>
+                    <span th:text="${#lists.size(userList)}">0</span> / <span th:text="${totalElements}">0</span>
+                    <span data-i18n="lbl_users_unit">người dùng</span>
+                </span>
                 <nav th:if="${totalPages > 1}">
                     <ul class="pagination pagination-sm mb-0 shadow-sm gap-1">
                         <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
@@ -162,7 +168,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content border-0 shadow-lg rounded-4">
                     <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
-                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;" data-i18n="title_add_user">
                             <i class="bi bi-person-plus-fill me-2"></i>Thêm người dùng mới
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -174,12 +180,12 @@
                             <div class="row">
                                 <div class="col-md-6 border-end pe-4">
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Tài khoản</label>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="th_account">Tài khoản</label>
                                         <input type="text" class="form-control bg-light border-0 shadow-none" name="userName" th:value="${userNameVal}">
                                         <div th:if="${errorUserName}" class="text-danger small mt-1 fw-semibold" th:text="${errorUserName}"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Mật khẩu</label>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_pwd">Mật khẩu</label>
                                         <div class="input-group bg-light rounded-3 overflow-hidden border-0">
                                             <input type="password" class="form-control bg-transparent border-0 shadow-none" name="password">
                                             <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
@@ -187,7 +193,7 @@
                                         <div th:if="${errorPassword}" class="text-danger small mt-1 fw-semibold" th:text="${errorPassword}"></div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Xác nhận mật khẩu</label>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="lbl_confirm_pwd">Xác nhận mật khẩu</label>
                                         <div class="input-group bg-light rounded-3 overflow-hidden border-0">
                                             <input type="password" class="form-control bg-transparent border-0 shadow-none" name="confirmPassword" th:value="${confirmPasswordVal}">
                                             <button class="btn btn-light bg-transparent border-0 text-muted toggle-pwd" type="button"><i class="bi bi-eye-slash"></i></button>
@@ -197,15 +203,15 @@
                                 </div>
                                 <div class="col-md-6 ps-4">
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Họ và tên</label>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="th_fullname">Họ và tên</label>
                                         <input type="text" class="form-control bg-light border-0 shadow-none" name="fullName" th:value="${fullNameVal}">
                                         <div th:if="${errorFullName}" class="text-danger small mt-1 fw-semibold" th:text="${errorFullName}"></div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label class="form-label text-dark fw-bold small">Nhóm / Vai trò</label>
+                                        <label class="form-label text-dark fw-bold small" data-i18n="th_role">Nhóm / Vai trò</label>
                                         <select class="form-select bg-light border-0 shadow-none" name="position" id="groupSelect">
-                                            <option value="">-- Bỏ qua hoặc Chọn nhóm --</option>
+                                            <option value="" data-i18n="lbl_select_group_default_add">-- Bỏ qua hoặc Chọn nhóm --</option>
                                             <option th:each="g : ${allGroups}" 
                                                     th:value="${g.groupName}" 
                                                     th:text="${g.groupName}" 
@@ -216,8 +222,8 @@
                             </div>
                         </div>
                         <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
-                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal">Hủy</button>
-                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;">Tạo tài khoản</button>
+                            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_create_account">Tạo tài khoản</button>
                         </div>
                     </form>
                 </div>
@@ -227,8 +233,8 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-lg rounded-4">
                     <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
-                        <h5 class="modal-title fw-bold" style="color: #ff8c00;">
-                            <i class="bi bi-pencil-square me-2"></i>Cập nhật tài khoản
+                        <h5 class="modal-title fw-bold" style="color: #ff8c00;" data-i18n="title_edit_user">
+                                <i class="bi bi-pencil-square me-2"></i>Cập nhật tài khoản
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -245,7 +251,7 @@
                             <div class="mb-3">
                                 <label class="form-label text-dark fw-bold small" data-i18n="th_role">Nhóm / Vai trò</label>
                                 <select class="form-select bg-light border-0 shadow-none" name="position" id="editPosition">
-                                    <option value="">-- Chọn nhóm --</option>
+                                    <option value="" data-i18n="lbl_select_group_default">-- Chọn nhóm --</option>
                                     <option th:each="g : ${allGroups}" 
                                             th:value="${g.groupName}" 
                                             th:text="${g.groupName}"></option>
@@ -255,8 +261,8 @@
                             <div class="mb-3">
                                 <label class="form-label text-dark fw-bold small" data-i18n="th_account_status">Trạng thái tài khoản</label>
                                 <select class="form-select bg-light border-0 shadow-none" name="isEnabled" id="editIsEnabled">
-                                    <option value="true">Bình thường (Cho phép đăng nhập)</option>
-                                    <option value="false">Đã khóa (Banned)</option>
+                                    <option value="true" data-i18n="status_normal">Bình thường (Cho phép đăng nhập)</option>
+                                    <option value="false" data-i18n="status_banned">Đã khóa (Banned)</option>
                                 </select>
                             </div>
                         </div>
@@ -313,7 +319,7 @@
                         const groupVal = document.getElementById('groupSelect').value;
                         if (!userName || !password || !confirmPass || !fullName) return; 
                         if (!groupVal || groupVal.trim() === '') {
-                            const isConfirm = confirm("Bạn chưa chọn nhóm người dùng. Tiếp tục tạo tài khoản?");
+                            const isConfirm = confirm(window.getI18nText('confirm_no_group'));
                             if (!isConfirm) event.preventDefault();
                         }
                     });

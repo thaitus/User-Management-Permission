@@ -20,7 +20,7 @@
         
         <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
             <h2 class="fw-bold mb-0" style="color: #ff8c00; font-size: 28px;">
-                <i class="bi bi-people-fill me-2"></i>Thành viên nhóm: <span class="text-dark" th:text="${group.groupName}"></span>
+                <i class="bi bi-people-fill me-2"></i><span data-i18n="title_members">Thành viên nhóm:</span> <span class="text-dark" th:text="${group.groupName}"></span>
             </h2>
             <a th:href="@{/groups}" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 transition-all">
                 <i class="bi bi-arrow-left"></i> <span data-i18n="btn_back">Quay lại danh sách</span>
@@ -40,13 +40,13 @@
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
-                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-check-fill text-success me-2"></i>Đang trong nhóm (<span th:text="${#lists.size(currentMembers)}"></span>)</h5>
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-check-fill text-success me-2"></i><span data-i18n="lbl_in_group">Đang trong nhóm</span> (<span th:text="${#lists.size(currentMembers)}"></span>)</h5>
                     </div>
                     <div class="card-body p-3 overflow-auto" style="max-height: 600px;">
                         
                         <div th:if="${#lists.isEmpty(currentMembers)}" class="text-center py-5 text-muted">
                             <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
-                            Nhóm này hiện chưa có thành viên nào.
+                            <span data-i18n="msg_no_members">Nhóm này hiện chưa có thành viên nào.</span>
                         </div>
 
                         <ul class="list-group list-group-flush rounded-3">
@@ -58,9 +58,9 @@
                                         <div class="text-muted small" th:text="${user.userName}">Tài khoản</div>
                                     </div>
                                 </div>
-                                <form th:action="@{/groups/{id}/members/remove(id=${group.groupID})}" method="post" onsubmit="return confirm('Bạn muốn đuổi người này khỏi nhóm?');">
+                                <form th:action="@{/groups/{id}/members/remove(id=${group.groupID})}" method="post" onsubmit="return confirm(getI18nText('confirm_remove_member'));">
                                     <input type="hidden" name="userId" th:value="${user.userID}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm fw-semibold">Xóa</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm fw-semibold" data-i18n="btn_remove">Xóa</button>
                                 </form>
                             </li>
                         </ul>
@@ -71,7 +71,7 @@
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
-                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-plus-fill me-2" style="color: #ff8c00;"></i>Người dùng chưa có nhóm</h5>
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-person-plus-fill me-2" style="color: #ff8c00;"></i><span data-i18n="lbl_available_users">Người dùng chưa có nhóm</span></h5>
                     </div>
                     
                     <form th:action="@{/groups/{id}/members/add(id=${group.groupID})}" method="post" id="addMembersForm" class="d-flex flex-column h-100">
@@ -81,7 +81,7 @@
                             
                             <div th:if="${#lists.isEmpty(availableUsers)}" class="text-center py-5 text-muted">
                                 <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-25"></i>
-                                Tất cả người dùng đều đã có nhóm!
+                                <span data-i18n="msg_all_users_grouped">Tất cả người dùng đều đã có nhóm!</span>
                             </div>
 
                             <div class="d-flex flex-column gap-2">
@@ -103,8 +103,12 @@
                         </div>
                         
                         <div class="card-footer bg-white border-top p-3 d-flex justify-content-between align-items-center rounded-bottom-4">
-                            <span class="text-muted fw-semibold small">Đã chọn: <span id="selectedCount" style="color: #ff8c00;">0</span> người</span>
-                            <button type="submit" class="btn text-white rounded-pill px-4 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" id="btnAddSubmit" disabled>
+                            <span class="text-muted fw-semibold small">
+                                <span data-i18n="lbl_selected">Đã chọn:</span> 
+                                <span id="selectedCount" style="color: #ff8c00;">0</span> 
+                                <span data-i18n="lbl_users_unit_count">người</span>
+                            </span>
+                            <button type="submit" class="btn text-white rounded-pill px-4 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" id="btnAddSubmit" data-i18n="btn_add_to_group" disabled>
                                 Thêm vào nhóm
                             </button>
                         </div>

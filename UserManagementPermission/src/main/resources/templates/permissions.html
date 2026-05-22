@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Ma trận Phân quyền - IVS System</title>
+    <style>
+        /* CSS Đại tu: Ép nút gạt công tắc (Toggle Switch) chuyển sang màu cam mặc định của app */
+        .custom-switch .form-check-input:checked {
+            background-color: #ff8c00 !important;
+            border-color: #ff8c00 !important;
+            box-shadow: 0 0 8px rgba(255, 140, 0, 0.4) !important;
+        }
+        .custom-switch .form-check-input {
+            width: 3rem !important;
+            height: 1.5rem !important;
+            cursor: pointer;
+        }
+        /* Hiệu ứng di chuột nhẹ nhàng cho dòng bảng */
+        .matrix-row:hover {
+            background-color: #fffaf5 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <span layout:fragment="page-header" class="d-none"></span>
+
+    <div layout:fragment="content">
+        
+        <h2 class="fw-bold mb-4" style="color: #ff8c00; font-size: 28px;" data-i18n="title_permission_matrix">
+            Phân quyền hệ thống
+        </h2>
+
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 border-start border-5 border-success rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success me-2"></i><span class="text-dark fw-semibold" th:text="${successMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 border-start border-5 border-danger rounded-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i><span class="text-dark fw-semibold" th:text="${errorMsg}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-shield-lock-fill me-2" style="color: #ff8c00;"></i><span data-i18n="lbl_select_group">Chọn nhóm cấu hình</span>
+                    </h5>
+                    
+                    <label class="form-label text-muted small fw-bold" data-i18n="lbl_group">Nhóm người dùng</label>
+                    <select class="form-select border border-2 shadow-none p-2 rounded-3" 
+                            style="border-color: #ff8c00 !important;"
+                            onchange="location = this.value;">
+                        <option value="/permissions" data-i18n="lbl_select_group_default">-- Chọn nhóm người dùng --</option>
+                        <option th:each="g : ${allGroups}" 
+                                th:value="@{/permissions(groupId=${g.groupID})}" 
+                                th:text="${g.groupName}"
+                                th:selected="${selectedGroup != null and selectedGroup.groupID == g.groupID}"></option>
+                    </select>
+
+                    <div class="text-muted small mt-4 p-3 bg-light rounded-3 border-start border-4 border-warning">
+                        <i class="bi bi-info-circle-fill text-warning me-1"></i>
+                        <span data-i18n="matrix_guide">Mẹo: Hệ thống sử dụng nút gạt công tắc. Gạt sang phải màu cam để kích hoạt quyền, gạt trái màu xám để tước quyền ngay lập tức.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div th:if="${selectedGroup == null}" class="card shadow-sm border-0 rounded-4 p-5 text-center text-muted bg-white h-100 d-flex flex-column justify-content-center align-items-center">
+                    <i class="bi bi-shield-slash fs-1 text-muted opacity-25 mb-2"></i>
+                    <p class="fw-semibold mb-0" data-i18n="msg_select_group_first">Vui lòng chọn một nhóm người dùng ở bên trái để thiết lập quyền truy cập.</p>
+                </div>
+
+                <div th:if="${selectedGroup != null}" class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                    <div class="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0">
+                             <span data-i18n="lbl_group_permission_for">Quyền hạn nhóm:</span> <span class="badge text-white px-3 py-2 rounded-pill shadow-sm fs-6" style="background-color: #ff8c00;" th:text="${selectedGroup.groupName}"></span>
+                        </h5>
+                    </div>
+                    
+                    <form th:action="@{/permissions/save}" method="post">
+                        <input type="hidden" name="groupId" th:value="${selectedGroup.groupID}">
+                        
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="ps-4 fw-bold text-muted" style="width: 40%;" data-i18n="th_screen_name">Màn hình / Chức năng</th>
+                                            <th class="text-center fw-bold text-muted" style="width: 30%;" data-i18n="lbl_view">Quyền Xem (Menu)</th>
+                                            <th class="text-center fw-bold text-muted" style="width: 30%;" data-i18n="lbl_edit">Quyền Sửa (Action)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="row : ${matrix}" class="matrix-row">
+                                            <td class="ps-4 fw-bold text-dark" th:attr="data-i18n='screen_' + ${row.screenID}" th:text="${row.screenName}">Tên màn hình</td>
+                                            
+                                            <td class="text-center">
+                                                <div class="form-check form-switch d-inline-block custom-switch">
+                                                    <input class="form-check-input" type="checkbox" name="viewScreens" 
+                                                           th:value="${row.screenID}" 
+                                                           th:checked="${row.canView}">
+                                                </div>
+                                            </td>
+                                            
+                                            <td class="text-center">
+                                                <div class="form-check form-switch d-inline-block custom-switch">
+                                                    <input class="form-check-input" type="checkbox" name="editScreens" 
+                                                           th:value="${row.screenID}" 
+                                                           th:checked="${row.canEdit}">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-light border-top p-4 d-flex justify-content-center rounded-bottom-4">
+                            <button type="submit" class="btn text-white rounded-pill px-5 py-2 fw-bold shadow-sm transition-all" 
+                                    style="background-color: #ff8c00; border: none;"
+                                    data-i18n="btn_save_matrix">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Lưu quyền
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <th:block layout:fragment="js-scripts">
+        </th:block>
+</body>
+</html>

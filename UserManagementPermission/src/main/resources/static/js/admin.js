@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // 2. Báo lỗi nếu bỏ trống
             if (!fullName) {
-                alert("Họ và tên không được bỏ trống!");
+                alert(getI18nText('alert_fullname_empty'));
                 event.preventDefault(); // Chặn gửi form
                 return;
             }
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
             // 3. Kiểm tra định dạng (Chỉ cho phép chữ cái và khoảng trắng, hỗ trợ tiếng Việt)
             const nameRegex = /^[\p{L}\s]+$/u; 
             if (!nameRegex.test(fullName)) {
-                alert("Họ tên sai định dạng! Không được chứa số hoặc ký tự đặc biệt.");
+                alert(getI18nText('alert_fullname_invalid'));
                 event.preventDefault();
                 return;
             }
@@ -189,11 +189,32 @@ document.addEventListener("DOMContentLoaded", function() {
             // 4. Cảnh báo nếu không chọn Nhóm/Vai trò
             const position = document.getElementById('editPosition').value;
             if (!position || position.trim() === '') {
-                const isConfirm = confirm("Bạn chưa chọn Vai trò/Nhóm cho người dùng này. Vẫn tiếp tục lưu?");
+                const isConfirm = confirm(getI18nText('confirm_no_group_edit'));
                 if (!isConfirm) {
                     event.preventDefault();
                 }
             }
         });
     }
+
+    // Tắt/bật Animations (Settings)
+    const switchAnim = document.getElementById('switchAnim');
+    if (switchAnim) {
+        const animDisabled = localStorage.getItem('animationsDisabled');
+        if (animDisabled === 'true') {
+            switchAnim.checked = false;
+            document.body.classList.add('disable-animations');
+        }
+
+        switchAnim.addEventListener('change', function() {
+            if (!this.checked) {
+                document.body.classList.add('disable-animations');
+                localStorage.setItem('animationsDisabled', 'true');
+            } else {
+                document.body.classList.remove('disable-animations');
+                localStorage.setItem('animationsDisabled', 'false');
+            }
+        });
+    }
 });
+

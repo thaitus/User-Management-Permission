@@ -1,5 +1,9 @@
 /* Layout Admin Tổng quát */
-body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f6f9; }
+body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #eef2f5; }
+body.disable-animations *, body.disable-animations *::before, body.disable-animations *::after {
+    animation: none !important;
+    transition: none !important;
+}
 .sidebar { min-height: 100vh; width: 260px; background-color: #343a40; color: white; transition: all 0.3s; }
 .sidebar-brand { padding: 20px; background-color: #ff8c00; color: white; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.1); }
 .sidebar-nav { padding: 0; list-style: none; }

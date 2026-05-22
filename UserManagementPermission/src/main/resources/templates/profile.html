@@ -16,7 +16,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         <div th:if="${pwdSuccess}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 bg-white border-start border-5 border-success" role="alert">
-            <i class="bi bi-shield-check-fill text-success me-2"></i><span class="text-dark fw-semibold" th:text="${pwdSuccess}"></span>
+            <i class="bi bi-shield-check-fill text-success me-2"></i><span class="text-dark fw-semibold" data-i18n="msg_pwd_success" th:text="${pwdSuccess}">Đã đổi mật khẩu bảo mật thành công!</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -65,7 +65,11 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted fw-semibold" data-i18n="lbl_gender">Giới tính:</div>
-                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.gender}">-</div>
+                            <div class="col-sm-8 text-dark fw-medium" 
+                                 th:attr="data-i18n=${session.loggedInUser.gender == 'Nam' ? 'gender_male' : 
+                                                    (session.loggedInUser.gender == 'Nữ' ? 'gender_female' : 
+                                                    (session.loggedInUser.gender == 'Khác' ? 'gender_other' : 'gender_unknown'))}"
+                                 th:text="${session.loggedInUser.gender}">-</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted fw-semibold" data-i18n="lbl_group">Nhóm người dùng:</div>
@@ -73,11 +77,17 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted fw-semibold" data-i18n="lbl_phone">Số điện thoại:</div>
-                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.phone == '' ? 'Chưa cập nhật' : session.loggedInUser.phone}">-</div>
+                            <div class="col-sm-8 text-dark fw-medium">
+                                <span th:text="${session.loggedInUser.phone}" th:unless="${session.loggedInUser.phone == null || session.loggedInUser.phone == ''}"></span>
+                                <span th:if="${session.loggedInUser.phone == null || session.loggedInUser.phone == ''}" data-i18n="lbl_no_phone">Chưa cập nhật</span>
+                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-sm-4 text-muted fw-semibold" data-i18n="lbl_email">Email:</div>
-                            <div class="col-sm-8 text-dark fw-medium" th:text="${session.loggedInUser.email == '' ? 'Chưa cập nhật' : session.loggedInUser.email}">-</div>
+                            <div class="col-sm-8 text-dark fw-medium">
+                                <span th:text="${session.loggedInUser.email}" th:unless="${session.loggedInUser.email == null || session.loggedInUser.email == ''}"></span>
+                                <span th:if="${session.loggedInUser.email == null || session.loggedInUser.email == ''}" data-i18n="lbl_no_email">Chưa cập nhật email</span>
+                            </div>
                         </div>
                     </div>
                 </div>

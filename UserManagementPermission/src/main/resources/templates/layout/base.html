@@ -5,20 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title layout:title-pattern="$CONTENT_TITLE - IVS System">Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
-    <link rel="stylesheet" th:href="@{/css/admin.css?v=1.2}">
+    <link rel="stylesheet" th:href="@{/css/admin.css?v=1.4}">
 </head>
 
 <body class="d-flex">
 
-    <nav class="sidebar">
+    <nav class="sidebar" style="position: sticky; top: 0; height: 100vh; overflow-y: auto;">
         <div class="sidebar-brand d-flex flex-column align-items-center justify-content-center">
             <span id="realtime-clock" class="fs-4 fw-bold mb-1" style="letter-spacing: 2px;">00:00:00</span>
             <span class="badge bg-light text-dark px-3 py-1 rounded-pill shadow-sm" style="font-size: 0.8rem;">
                 <i class="bi bi-shield-check me-1"></i> <span th:text="${session.loggedInUser.position}">Role</span>
             </span>
+            <div class="mt-2 text-light fw-bold" style="font-size: 0.8rem;">
+                <i class="bi bi-stopwatch me-1"></i>Phiên: <span id="sessionTimer">00:00:00</span>
+            </div>
         </div>
 
         <ul class="sidebar-nav mt-3">
@@ -34,12 +40,17 @@
             
             <li th:if="${session.userPermissions != null and session.userPermissions[1] != null and session.userPermissions[1]['canView']}">
                 <a th:href="@{/users}" th:classappend="${currentPage == 'users' ? 'active' : ''}" data-i18n="nav_users">
-                    <i class="bi bi-person-lines-fill me-2"></i> Quản lý Người dùng
+                    <i class="bi bi-person-lines-fill me-2"></i> Quản lý người dùng
                 </a>
             </li>
             <li th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canView']}">
                 <a th:href="@{/groups}" th:classappend="${currentPage == 'groups' ? 'active' : ''}" data-i18n="nav_groups">
-                    <i class="bi bi-collection-fill me-2"></i> Nhóm người dùng
+                    <i class="bi bi-collection-fill me-2"></i> Quản lý nhóm người dùng
+                </a>
+            </li>
+            <li th:if="${session.userPermissions != null and session.userPermissions[3] != null and session.userPermissions[3]['canView']}">
+                <a th:href="@{/permissions}" th:classappend="${currentPage == 'permissions' ? 'active' : ''}" data-i18n="nav_permissions">
+                    <i class="bi bi-shield-lock-fill me-2"></i> Phân quyền hệ thống
                 </a>
             </li>
         </ul>
@@ -57,7 +68,28 @@
                 
                 <div class="d-flex align-items-center gap-3 border-end pe-4">
                     
-                    <button id="themeToggle" class="btn btn-link p-0 text-warning theme-toggle-btn" title="Đổi giao diện">
+                    <!-- Nút Thông báo (Dropdown) -->
+                    <div class="dropdown">
+                        <button class="btn btn-link p-0 text-secondary position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-i18n-title="btn_notifications" title="Thông báo">
+                            <i class="bi bi-bell-fill fs-5"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+                                <span class="visually-hidden">New alerts</span>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-3 p-3 text-center" style="min-width: 250px;">
+                            <li class="text-muted"><i class="bi bi-inbox fs-3 d-block mb-2"></i><span data-i18n="msg_no_noti">Chưa có thông báo mới</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Nút Cài đặt (Mở Modal) -->
+                    <button class="btn btn-link p-0 text-secondary" data-bs-toggle="modal" data-bs-target="#settingsModal" data-i18n-title="btn_settings" title="Cài đặt hệ thống">
+                        <i class="bi bi-gear-fill fs-5"></i>
+                    </button>
+
+                    <div class="vr mx-1 opacity-25"></div>
+                    
+                    <!-- Nút Đổi Theme -->
+                    <button id="themeToggle" class="btn btn-link p-0 text-warning theme-toggle-btn" data-i18n-title="theme_toggle_tooltip" title="Đổi giao diện">
                         <i class="bi bi-sun-fill fs-4" id="themeIcon"></i>
                     </button>
 
@@ -109,11 +141,59 @@
         </footer>
     </div>
 
+    <!-- Modal Cài đặt Hệ thống -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="settingsModalLabel"><i class="bi bi-gear-fill me-2 text-primary"></i><span data-i18n="modal_settings_title">Cài đặt Hệ thống</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Tùy chọn 1: Bật tắt hiệu ứng -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h6 class="fw-bold mb-1" data-i18n="set_anim_title">Hiệu ứng chuyển động (Animations)</h6>
+                            <p class="text-muted small mb-0" data-i18n="set_anim_desc">Tắt hiệu ứng để tăng tốc độ trang web</p>
+                        </div>
+                        <div class="form-check form-switch fs-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchAnim" checked>
+                        </div>
+                    </div>
+                    <!-- Tùy chọn 2: Cảnh báo âm thanh -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h6 class="fw-bold mb-1" data-i18n="set_sound_title">Âm thanh thông báo</h6>
+                            <p class="text-muted small mb-0" data-i18n="set_sound_desc">Phát âm thanh khi có thông báo mới</p>
+                        </div>
+                        <div class="form-check form-switch fs-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchSound" checked>
+                        </div>
+                    </div>
+                    <!-- Tùy chọn 3: Chế độ tối tự động -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="fw-bold mb-1" data-i18n="set_auto_dark_title">Dark Mode tự động</h6>
+                            <p class="text-muted small mb-0" data-i18n="set_auto_dark_desc">Tự động chuyển chế độ theo hệ điều hành</p>
+                        </div>
+                        <div class="form-check form-switch fs-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="switchAutoDark">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal" data-i18n="btn_close">Đóng</button>
+                    <button type="button" class="btn text-white rounded-pill px-4 fw-bold" style="background-color: #ff8c00;" data-bs-dismiss="modal" data-i18n="btn_save_settings">Lưu cài đặt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <script th:src="@{/js/i18n.js?v=1.0}"></script>
+    <script th:src="@{/js/i18n.js?v=1.5}"></script>
     
-    <script th:src="@{/js/admin.js}"></script>
+    <script th:src="@{/js/admin.js?v=1.1}"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -147,6 +227,37 @@
                     }
                 });
             }
+
+            // Session Timer Logic
+            function initSessionTimer() {
+                if (!sessionStorage.getItem("loginTime")) {
+                    sessionStorage.setItem("loginTime", Date.now());
+                }
+                const loginTime = parseInt(sessionStorage.getItem("loginTime"));
+                const sessionTimerEl = document.getElementById("sessionTimer");
+                
+                if(sessionTimerEl) {
+                    setInterval(() => {
+                        const now = Date.now();
+                        const diffSecs = Math.floor((now - loginTime) / 1000);
+                        
+                        const h = Math.floor(diffSecs / 3600).toString().padStart(2, '0');
+                        const m = Math.floor((diffSecs % 3600) / 60).toString().padStart(2, '0');
+                        const s = (diffSecs % 60).toString().padStart(2, '0');
+                        
+                        sessionTimerEl.textContent = `${h}:${m}:${s}`;
+                    }, 1000);
+                }
+            }
+            initSessionTimer();
+            
+            // Listen for logout to clear timer
+            const logoutLinks = document.querySelectorAll('a[href="/logout"]');
+            logoutLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    sessionStorage.removeItem("loginTime");
+                });
+            });
         });
     </script>
     <th:block layout:fragment="js-scripts"></th:block>

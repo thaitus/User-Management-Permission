@@ -83,7 +83,7 @@
                             
                             <td class="fw-medium text-dark">
                                 <i class="bi bi-person-fill text-muted me-1"></i>
-                                <span th:text="${group.memberCount}"></span> người
+                                <span th:text="${group.memberCount}"></span> <span data-i18n="lbl_users_unit_count">người</span>
                             </td>
                             
                             <td th:if="${session.userPermissions != null and session.userPermissions[2] != null and session.userPermissions[2]['canEdit']}" 
@@ -103,16 +103,16 @@
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 
-                                <form th:action="@{/groups/delete}" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhóm này? Các tài khoản thuộc nhóm sẽ mất quyền truy cập!');">
+                                <form th:action="@{/groups/delete}" method="post" class="d-inline" onsubmit="return confirm(getI18nText('msg_confirm_delete_group'));">
                                     <input type="hidden" name="groupId" th:value="${group.groupID}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" title="Xóa"><i class="bi bi-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(groupList)}">
-                            <td colspan="3" class="text-center py-5 text-muted">
+                            <td colspan="4" class="text-center py-5 text-muted">
                                 <i class="bi bi-inboxes fs-3 d-block mb-2 opacity-50"></i>
-                                Không tìm thấy dữ liệu nhóm.
+                                <span data-i18n="msg_no_groups">Không tìm thấy dữ liệu nhóm.</span>
                             </td>
                         </tr>
                     </tbody>
@@ -120,7 +120,12 @@
             </div>
             
             <div class="d-flex justify-content-between align-items-center mt-4 px-2">
-                <span class="text-muted small">Đang hiển thị <span th:text="${#lists.size(groupList)}"></span> / <span th:text="${totalElements}"></span> nhóm</span>
+                <span class="text-muted small">
+                    <span data-i18n="lbl_showing">Đang hiển thị</span> 
+                    <span th:text="${#lists.size(groupList)}"></span> / 
+                    <span th:text="${totalElements}"></span> 
+                    <span data-i18n="lbl_groups_unit">nhóm</span>
+                </span>
                 <nav th:if="${totalPages > 1}">
                     <ul class="pagination pagination-sm mb-0 shadow-sm gap-1">
                         <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
@@ -156,7 +161,7 @@
                         </div>
                         <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
                             <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
-                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save">Thêm Mới</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_add">Thêm Mới</button>
                         </div>
                     </form>
                 </div>
@@ -183,7 +188,7 @@
                         </div>
                         <div class="modal-footer border-top-0 pb-4 justify-content-center bg-light rounded-bottom-4 mt-2">
                             <button type="button" class="btn btn-secondary rounded-pill px-4 fw-semibold" data-bs-dismiss="modal" data-i18n="btn_cancel">Hủy</button>
-                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save">Lưu Cập Nhật</button>
+                            <button type="submit" class="btn text-white rounded-pill px-5 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-i18n="btn_save_update">Lưu Cập Nhật</button>
                         </div>
                     </form>
                 </div>

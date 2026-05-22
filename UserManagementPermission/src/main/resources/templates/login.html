@@ -5,12 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - Individual Systems</title>
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     
     <link th:href="@{/css/login.css}" rel="stylesheet">
+    <style>
+        .lang-btn {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            border: 1px solid #dee2e6 !important;
+            transition: all 0.2s ease;
+        }
+        .lang-btn:hover {
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        }
+    </style>
 </head>
-<body>
+<body class="position-relative">
+    <!-- Language Selection Dropdown -->
+    <div class="position-absolute top-0 end-0 p-3 z-3">
+        <div class="dropdown">
+            <button class="btn border-0 rounded-pill shadow-sm d-flex align-items-center gap-2 lang-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="fi fi-vn rounded-circle fs-5" id="currentLangIcon"></span> 
+                <span class="fw-bold small" id="currentLangText">VI</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-4 mt-2 p-2 lang-dropdown">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3 active-lang" href="#" onclick="changeLang(event, 'vn', 'VI')">
+                        <span class="fi fi-vn rounded fs-5"></span> Tiếng Việt
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" onclick="changeLang(event, 'gb', 'EN')">
+                        <span class="fi fi-gb rounded fs-5"></span> English
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-3 py-2 rounded-3" href="#" onclick="changeLang(event, 'jp', 'JP')">
+                        <span class="fi fi-jp rounded fs-5"></span> 日本語
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
@@ -21,22 +60,22 @@
                             <img th:src="@{/images/logo.png}" alt="IVS Logo">
                         </div>
 
-                        <h5 class="text-center mb-4 fw-bold" style="color: #4a4a4a;">ĐĂNG NHẬP</h5>
+                        <h5 class="text-center mb-4 fw-bold" style="color: #4a4a4a;" data-i18n="login_title">ĐĂNG NHẬP</h5>
 
                         <div th:if="${error}" class="alert alert-danger text-center small p-2 mb-3" style="border-radius: 8px;" role="alert" th:text="${error}"></div>
 
                         <form th:action="@{/login}" method="post" id="loginForm">
                             
                             <div class="mb-3">
-                                <label for="userName" class="form-label text-muted fw-semibold small">Tài khoản</label>
-                                <input type="text" class="form-control" id="userName" name="userName" placeholder="Nhập tài khoản" th:value="${userName}" autofocus autocomplete="off">
+                                <label for="userName" class="form-label text-muted fw-semibold small" data-i18n="login_account">Tài khoản</label>
+                                <input type="text" class="form-control" id="userName" name="userName" placeholder="Nhập tài khoản" data-i18n="login_ph_account" th:value="${userName}" autofocus autocomplete="off">
                                 <div th:if="${errorUserName}" class="text-danger small mt-1 fw-semibold" th:text="${errorUserName}"></div>
                             </div>
                             
                             <div class="mb-4">
-                                <label for="pass" class="form-label text-muted fw-semibold small">Mật khẩu</label>
+                                <label for="pass" class="form-label text-muted fw-semibold small" data-i18n="login_pwd">Mật khẩu</label>
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="pass" name="pass" placeholder="Nhập mật khẩu">
+                                    <input type="password" class="form-control" id="pass" name="pass" placeholder="Nhập mật khẩu" data-i18n="login_ph_pwd">
                                     <button class="btn btn-outline-secondary btn-eye" type="button" id="toggleBtn">
                                         <i class="bi bi-eye-slash" id="eyeIcon"></i>
                                     </button>
@@ -44,7 +83,7 @@
                                 <div th:if="${errorPass}" class="text-danger small mt-1 fw-semibold" th:text="${errorPass}"></div>
                             </div>
                             
-                            <button type="submit" class="btn btn-brand w-100">ĐĂNG NHẬP</button>
+                            <button type="submit" class="btn btn-brand w-100" data-i18n="login_button">ĐĂNG NHẬP</button>
                         </form>
                         
                     </div>
@@ -53,6 +92,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/i18n.js?v=1.1}"></script>
     <script th:src="@{/js/login.js}"></script>
 </body>
 </html>

@@ -66,6 +66,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "SELECT COUNT(*) FROM `User` WHERE userName = :userName", nativeQuery = true)
     int countByUserName(@Param("userName") String userName);
 
+    // Đếm số lượng user đang active
+    @Query(value = "SELECT COUNT(*) FROM `User` WHERE isActive = true", nativeQuery = true)
+    long countByIsActive();
+
     // Thêm User mới
     // 1. Sửa đoạn cuối VALUES từ 'true' thành 'false' (Mặc định Offline)
     @Modifying

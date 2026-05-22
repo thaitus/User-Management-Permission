@@ -56,4 +56,38 @@ public class GroupService {
     public void deleteGroup(int id) {
         groupRepository.deleteById(id);
     }
+
+    // VŨ KHÍ MA TRẬN 1: Lấy danh sách quyền của 1 nhóm để vẽ giao diện
+    public java.util.List<UserManagementPermission.model.PermissionDTO> getGroupPermissions(int groupId) {
+        java.util.List<Object[]> results = groupRepository.getMatrixByGroupId(groupId);
+        java.util.List<UserManagementPermission.model.PermissionDTO> dtoList = new java.util.ArrayList<>();
+        
+        for (Object[] row : results) {
+            int screenId = ((Number) row[0]).intValue();
+            String screenName = (String) row[1];
+            boolean canView = ((Number) row[2]).intValue() == 1;
+            boolean canEdit = ((Number) row[3]).intValue() == 1;
+            dtoList.add(new UserManagementPermission.model.PermissionDTO(screenId, screenName, canView, canEdit));
+        }
+        return dtoList;
+    }
+
+    // VŨ KHÍ MA TRẬN 2: Lưu lại mớ bòng bong quyền mới mà Admin vừa gạt
+    @jakarta.transaction.Transactional
+    public void updateGroupMatrix(int groupId, java.util.List<Integer> viewScreens, java.util.List<Integer> editScreens) {
+        // 1. Dọn sạch rác cũ
+        groupRepository.deletePermissionsByGroupId(groupId);
+        
+        // 2. Lấy danh sách tất cả các màn hình mà Admin vừa gạt (Dùng Set để lọc trùng)
+        java.util.Set<Integer> allInteractedScreens = new java.util.HashSet<>();
+        if (viewScreens != null) allInteractedScreens.addAll(viewScreens);
+        if (editScreens != null) allInteractedScreens.addAll(editScreens);
+
+        // 3. Vòng lặp lưu xuống Database
+        for (Integer screenId : allInteractedScreens) {
+            boolean canView = viewScreens != null && viewScreens.contains(screenId);
+            boolean canEdit = editScreens != null && editScreens.contains(screenId);
+            groupRepository.savePermission(groupId, screenId, canView, canEdit);
+        }
+    }
 }
